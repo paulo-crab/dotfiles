@@ -6,7 +6,8 @@ vim.opt.splitright = true
 
 vim.opt.wrap = false
 
-vim.opt.clipboard=unnamed
+-- use system clipboard as default
+vim.opt.cb= "unnamed"
 
 vim.opt.undodir= vim.fn.stdpath("state") .. "/nvim/undo//"
 vim.opt.autocomplete = true
