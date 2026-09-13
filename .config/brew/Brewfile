@@ -1,0 +1,11 @@
+# Brewfile
+
+# Terminal
+brew "ghostty"
+
+# CLI Tools
+brew "zoxide"
+brew "fd"
+brew "fzf"
+brew "ripgrep"
+brew "bat"
