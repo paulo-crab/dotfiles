@@ -51,6 +51,9 @@ map("n", "<leader>bp", "<cmd>bprevious<cr>", { desc = "Previous buffer" })
 
 local function nvimtree_toggle()
   NvimTree.tree.toggle({ path = vim.fn.getcwd(), focus = true })
+  if NvimTree.tree.is_visible() then
+    vim.cmd("vertical resize 30")
+  end
 end
 map("n", "<leader>fe", nvimtree_toggle, { desc = "Toggle file explorer" })
 map("n", "<leader>fm", function() MiniFiles.open() end, { desc = "Toggle mini.files" })
