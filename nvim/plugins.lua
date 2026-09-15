@@ -6,8 +6,12 @@ end
 
 PackAdd("nvim-mini/mini.icons")
 PackAdd("stevearc/oil.nvim")
+PackAdd("sphamba/smear-cursor.nvim")
 
 require('mini.icons').setup()
+require('smear_cursor').setup({
+smear_between_neighbor_lines = false,
+})
 
 --- File Explorer
 require("oil").setup({
@@ -56,4 +60,5 @@ end,
 })
 
 vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+
 

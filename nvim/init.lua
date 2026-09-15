@@ -1,3 +1,7 @@
+vim.o.cmdheight = 1
+
+require('vim._core.ui2').enable({ enable = true })
+
 vim.opt.relativenumber = true
 vim.opt.number = true
 
@@ -5,7 +9,6 @@ vim.opt.splitbelow = true
 vim.opt.splitright = true
 
 vim.opt.wrap = false
-
 -- use system clipboard as default
 vim.opt.cb= "unnamed"
 
