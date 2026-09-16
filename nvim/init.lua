@@ -4,6 +4,7 @@ require('vim._core.ui2').enable({ enable = true })
 
 vim.opt.relativenumber = true
 vim.opt.number = true
+-- vim.opt.equalalways = false
 
 vim.opt.splitbelow = true
 vim.opt.splitright = true

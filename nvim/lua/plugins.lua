@@ -1,4 +1,4 @@
-local agh = "https://github.com/"
+local gh = "https://github.com/"
 
 local function PackAdd(package) 
 	vim.pack.add({"https://github.com/" .. package})
@@ -80,6 +80,4 @@ require("oil").setup({
 -- end,
 -- })
 
-vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
-
-
+vim.keymap.set("n", "-", "<Cmd>Oil<CR>") 
