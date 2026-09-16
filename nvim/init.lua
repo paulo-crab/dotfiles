@@ -14,7 +14,7 @@ vim.opt.cb= "unnamed"
 
 vim.opt.undodir= vim.fn.stdpath("state") .. "/nvim/undo//"
 vim.opt.autocomplete = true
-
+	
 vim.opt.swapfile = false
 
 require("themes")
