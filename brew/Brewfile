@@ -9,3 +9,15 @@ brew "fd"
 brew "fzf"
 brew "ripgrep"
 brew "bat"
+
+# Nvim
+brew "nvim"
+
+
+# MacOS essentials
+cask "bettertouchtool"
+cask "contexts"
+cask "bleunlock"
+cask "rectangle-pro"
+cask "karabiner-elements"
+
