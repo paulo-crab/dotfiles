@@ -18,5 +18,9 @@ vim.opt.autocomplete = true
 	
 vim.opt.swapfile = false
 
+-- Leader mapping	
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
 require("themes")
 require("plugins")

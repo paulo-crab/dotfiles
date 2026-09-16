@@ -7,11 +7,18 @@ end
 PackAdd("nvim-mini/mini.icons")
 PackAdd("stevearc/oil.nvim")
 PackAdd("sphamba/smear-cursor.nvim")
+PackAdd("folke/which-key.nvim")
 
 require('mini.icons').setup()
 require('smear_cursor').setup({
 smear_between_neighbor_lines = false,
 })
+require('which-key').setup({})
+
+vim.keymap.set("n", "<leader>", function()
+  require("which-key").show({ global = false })
+end, { desc = "Show buffer keymaps" })
+
 
 --- File Explorer
 require("oil").setup({
@@ -80,4 +87,4 @@ require("oil").setup({
 -- end,
 -- })
 
-vim.keymap.set("n", "-", "<Cmd>Oil<CR>") 
+vim.keymap.set("n", "-", "<Cmd>Oil<CR>", { desc = "Open parent directory" }) 
