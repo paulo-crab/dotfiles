@@ -1,10 +1,9 @@
-vim.o.cmdheight = 1
-
 require('vim._core.ui2').enable({ enable = true })
 
+vim.opt.cmdheight = 1
+vim.opt.laststatus = 3
 vim.opt.relativenumber = true
 vim.opt.number = true
--- vim.opt.equalalways = false
 
 vim.opt.splitbelow = true
 vim.opt.splitright = true
@@ -14,7 +13,6 @@ vim.opt.wrap = false
 vim.opt.cb= "unnamed"
 
 vim.opt.undodir= vim.fn.stdpath("state") .. "/nvim/undo//"
-vim.opt.autocomplete = true
 	
 vim.opt.swapfile = false
 
