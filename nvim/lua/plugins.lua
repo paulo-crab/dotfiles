@@ -19,12 +19,25 @@ local wk = require("which-key")
 wk.setup({})
 
 wk.add({
+  {
+    "<leader>?",
+    function()
+      wk.show({ global = true })
+    end,
+    desc = "Show global keymaps",
+  },
+
+  {
+    "<leader>/",
+    function()
+      wk.show({ global = false })
+    end,
+    desc = "Show buffer-local keymaps",
+  },
+
   { "<leader>f", group = "Find" },
 })
 
-vim.keymap.set("n", "<leader>?", "<cmd>WhichKey<cr>", {
-  desc = "Show which-key",
-})
 --- File Explorer
 require("oil").setup({
           default_file_explorer = true,
@@ -50,6 +63,7 @@ vim.keymap.set("n", "-", "<Cmd>Oil<CR>", { desc = "Open parent directory" })
 
 vim.api.nvim_create_autocmd('PackChanged', {
       callback = function(ev)
+
         local name, kind = ev.data.spec.name, ev.data.kind
         if name == 'fff' and (kind == 'install' or kind == 'update') then
           if not ev.data.active then vim.cmd.packadd('fff') end
