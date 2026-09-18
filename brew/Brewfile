@@ -9,10 +9,11 @@ brew "fd"
 brew "fzf"
 brew "ripgrep"
 brew "bat"
+brew "eza"
 
 # Nvim
 brew "nvim"
-
+brew "tree-sitter-cli"
 
 # MacOS essentials
 cask "bettertouchtool"
