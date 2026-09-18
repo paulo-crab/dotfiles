@@ -1,6 +1,58 @@
 # .configh/zsh/plugins.zsh
 #
 
+## FZF
+source <(fzf --zsh)
+
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd -t d . $HOME"
+export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
+export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} --icons=always | head -200'"
+
+## Catppuccin Mocha colors for fzf
+export FZF_DEFAULT_OPTS="
+  --info=right	
+  --color=bg:#1e1e2e,bg+:#313244,fg:#cdd6f4,fg+:#cdd6f4
+  --color=hl:#f38ba8,hl+:#f38ba8,info:#89b4fa,prompt:#cba6f7
+  --color=pointer:#f5c2e7,marker:#a6e3a1,spinner:#f5c2e7
+  --color=header:#89b4fa,border:#585b70,scrollbar:#45475a,query:#cdd6f4
+  --border=rounded
+  --layout=reverse
+  --height=80%
+  --prompt='❯ '
+  --pointer='▶'
+  --marker='✓'
+"
+
+# Use fd (https://github.com/sharkdp/fd) for listing path candidates.
+# - The first argument to the function ($1) is the base path to start traversal
+# - See the source code (completion.{bash,zsh}) for the details.
+#
+
+_fzf_compgen_path() {
+  fd --hidden --exclude ".git" . "$1"
+}
+
+# Use fd to generate the list for directory completion
+_fzf_compgen_dir() {
+  fd --type=d --exclude ".git" . "$1"
+}
+
+# Advanced customization of fzf options via _fzf_comprun function
+# - The first argument to the function is the name of the command.
+# - You should make sure to pass the rest of the arguments ($@) to fzf.
+_fzf_comprun() {
+  local command=$1
+  shift
+
+  case "$command" in
+    cd)           fzf --preview 'eza --tree --color=always {} | head -200'   "$@" ;;
+    export|unset) fzf --preview "eval 'echo \$'{}"         "$@" ;;
+    ssh)          fzf --preview 'dig {}'                   "$@" ;;
+    *)            fzf --preview 'bat -n --color=always --line-range :500 {}' "$@" ;;
+  esac
+}
 
 ## Starship init
 export STARSHIP_CONFIG=~/.config/starship/starship.toml
