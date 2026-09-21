@@ -12,27 +12,51 @@ vim.keymap.set("n", "<C-j>", "<C-W><down>", { desc = "Move cursor to windown und
 
 vim.keymap.set("i", "jk", "<Esc>")
 
-vim.keymap.set("n", "<leader>fe", function() require("mini.files").open() end , { desc = "Open File Explorer" })
 
 --- Diagnostics with mini.extra
 ---
 --- ChatGPT suggested bindings - TODO Tweak
 local extra = require("mini.extra")
 
-vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation", })
-vim.keymap.set("n", "gl", vim.diagnostic.open_float, { desc = "Diagnostic details", })
-vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code actions", })
-vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol", })
 
--- Diagnostics
+-- Diagnostics (prefix: [D]iagnostics)
 vim.keymap.set("n", "<leader>db", function() extra.pickers.diagnostic({ scope = "current" }) end, { desc = "Buffer diagnostics" })
 vim.keymap.set("n", "<leader>dw", function() extra.pickers.diagnostic({ scope = "all" }) end, { desc = "Workspace diagnostics" })
 
--- LSP navigation
-vim.keymap.set("n", "<leader>lr", function() extra.pickers.lsp({ scope = "references" }) end, { desc = "References" })
-vim.keymap.set("n", "<leader>ls", function() extra.pickers.lsp({ scope = "document_symbol" }) end, { desc = "Document symbols" })
-vim.keymap.set("n", "<leader>lS", function() extra.pickers.lsp({ scope = "workspace_symbol" }) end, { desc = "Workspace symbols" })
+vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation", })
+vim.keymap.set("n", "<leader>dd", vim.diagnostic.open_float, { desc = "Diagnostic details", })
 
--- Other useful lists
-vim.keymap.set("n", "<leader>fb", function() MiniPick.builtin.buffers() end, { desc = "Buffers" })
-vim.keymap.set("n", "<leader>fh", function() MiniPick.builtin.help() end, { desc = "Help" })
+-- LSP navigation (prefix: [C]ode)
+vim.keymap.set("n", "<leader>cfr", function() extra.pickers.lsp({ scope = "references" }) end, { desc = "References" })
+vim.keymap.set("n", "<leader>cds", function() extra.pickers.lsp({ scope = "document_symbol" }) end, { desc = "Document symbols" })
+vim.keymap.set("n", "<leader>cws", function() extra.pickers.lsp({ scope = "workspace_symbol" }) end, { desc = "Workspace symbols" })
+vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code actions", })
+
+vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol", })
+
+-- Other useful lists (Buffers = [B]uffers)
+local MiniPick = require("mini.pick")
+vim.keymap.set("n", "<leader>bs", function() MiniPick.builtin.buffers() end, { desc = "Switch between buffers" })
+vim.keymap.set("n", "<leader>bh", function() MiniPick.builtin.help() end, { desc = "Help" })
+
+-- Navigation ([F]iles)
+vim.keymap.set("n", "<leader>fe", function()
+  require("nvim-tree.api").tree.open({
+    path = vim.fn.getcwd(),
+  })
+end, { desc = "Open file tree at current directory" })
+
+vim.keymap.set("n", "<leader>fc", function()
+	MiniPick.builtin.files({
+   		 cwd = vim.fn.stdpath("config"),
+  	})
+end
+, { desc = "[c]onfiguration files"})
+
+local MiniFiles = require("mini.files")
+
+local minifiles_toggle = function(...)
+    if MiniFiles.close() == nil then MiniFiles.open(...) end
+  end
+
+vim.keymap.set("n", "<leader>fp", function() minifiles_toggle() end , { desc = "Open Picker" })

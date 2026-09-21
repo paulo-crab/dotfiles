@@ -1,5 +1,3 @@
-
-
 -- FFF: Fast File Finder
 vim.api.nvim_create_autocmd('PackChanged', {
   callback = function(event)
@@ -25,8 +23,18 @@ vim.keymap.set(
   { desc = 'FFFind files' }
 )
 
--- mini.picker
-require("mini.files").setup()	
+-- mini.pick
+
+require("mini.pick").setup({mappings = {
+    move_down = "<M-j>",
+    move_up = "<M-k>",
+    choose = "<M-l>",
+  }}
+)
+
+require("mini.files").setup()
+
+require("mini.icons").mock_nvim_web_devicons()
 
 -- Default Options
 --
@@ -85,3 +93,12 @@ require("mini.files").setup()
 --     width_preview = 25,
 --   },
 -- }
+
+require("nvim-tree").setup({
+  renderer = {
+    icons = {
+      webdev_colors = false,
+    },
+  },
+})
+
