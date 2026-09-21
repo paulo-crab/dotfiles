@@ -11,6 +11,9 @@ brew "ripgrep"
 brew "bat"
 brew "eza"
 
+# Music Player
+brew "cmus"
+
 # Nvim
 brew "nvim"
 brew "tree-sitter-cli"
