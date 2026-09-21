@@ -16,6 +16,21 @@ vim.g.fff = {
   },
 }
 
+require("mini.icons").mock_nvim_web_devicons()
+
+require("nvim-tree").setup({
+renderer = {
+    icons = {
+      show = {
+        file = true,
+        folder = true,
+        folder_arrow = true,
+        git = true,
+      },
+    },
+  },
+})
+
 vim.keymap.set(
   'n',
   'ff',
@@ -34,7 +49,6 @@ require("mini.pick").setup({mappings = {
 
 require("mini.files").setup()
 
-require("mini.icons").mock_nvim_web_devicons()
 
 -- Default Options
 --
@@ -93,12 +107,3 @@ require("mini.icons").mock_nvim_web_devicons()
 --     width_preview = 25,
 --   },
 -- }
-
-require("nvim-tree").setup({
-  renderer = {
-    icons = {
-      webdev_colors = false,
-    },
-  },
-})
-
