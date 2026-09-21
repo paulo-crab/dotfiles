@@ -3,13 +3,18 @@ require("config.utils")
 PackAdd("nvim-mini/mini.nvim")
 PackAdd("mason-org/mason.nvim")
 
+
 PackAdd("dmtrKovalenko/fff")
+PackAdd("nvim-tree/nvim-tree.lua")
+
 PackAdd("stevearc/conform.nvim", "stable")	
 PackAdd("saghen/blink.cmp", "v1.10.2")
 
 -- UI
 PackAdd("catppuccin/nvim")
 PackAdd("ellisonleao/gruvbox.nvim")
+PackAdd("folke/which-key.nvim")
+
 
 ---- For FFF
 vim.api.nvim_create_autocmd("PackChanged", {
