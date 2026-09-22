@@ -1,1 +1,2 @@
-require("mini.icons")
+require("mini.icons").mock_nvim_web_devicons()
+

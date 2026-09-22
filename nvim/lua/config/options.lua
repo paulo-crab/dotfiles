@@ -12,6 +12,8 @@ opt.wrap = false
 
 opt.swapfile=false
 
+opt.laststatus=3
+
 -- noselect: don't auto-select/auto-insert the first completion match while typing,
 -- menuone: still show the menu even for a single match
 opt.completeopt = { "menu", "menuone", "popup", "noselect" }
