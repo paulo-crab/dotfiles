@@ -7,4 +7,4 @@ alias la='eza -la --long --git --color=always --no-permissions --icons=always --
 alias tree='eza --tree'
 alias cpdir='cp -R'
 alias cat='bat'
-alias cd='z'
+#alias cd='z'
