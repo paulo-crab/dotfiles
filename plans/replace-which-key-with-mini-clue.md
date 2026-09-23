@@ -126,6 +126,121 @@ Preferably by letting `vim.pack.del` rewrite the file (see verification step 1).
 is not updated automatically, delete the block by hand and fix the trailing comma on the
 `nvim-tree.lua` entry above it.
 
+### 4. Nerd Font icons in descriptions
+
+mini.clue has no icon system at all — verified: zero occurrences of "icon" in
+`mini.nvim/lua/mini/clue.lua`, and its whole config surface is `clues` / `triggers` / `window`.
+Rows render as plain `keys │ desc`. which-key, by contrast, is decorating your popup today
+(`icons.mappings = true` by default, 27 keyword rules matched against `desc`, colors from
+mini.icons). Note that which-key never reads `vim.g.have_nerd_font`, so the `false` at
+`options.lua:1` is not suppressing anything.
+
+The only way to keep glyphs under mini.clue is to put them in the description text itself.
+
+#### Where each icon has to go — this is not a free choice
+
+From `H.clues_get` (`mini/clue.lua:1740-1770`), descriptions are resolved in three passes:
+
+1. config `clues`, in array order — later entries overwrite earlier ones
+2. **global keymaps — `res_data.desc = map_data.desc or ''`, an unconditional overwrite**
+3. **buffer-local keymaps — same unconditional overwrite**
+
+So a real keymap's `desc` always beats a config clue. Consequences:
+
+- **Leaf mappings**: the icon must go in the `vim.keymap.set(..., { desc = ... })` call.
+  Putting it in `clues` silently does nothing — pass 2 overwrites it.
+- **Group prefixes** (`<leader>b`, `<leader>c`, …): these have no mapping, so the `clues` entry
+  is the only source. Icons go there.
+- **`gen_clues` sets**: their descriptions survive only for keys with no real mapping. `zz`,
+  `<C-w>s`, `` `a `` etc. keep mini.clue's text; but `gd`/`gD` (`keymaps.lua:30-31`) and the
+  LspAttach `grn`/`gra`/`grD` (`lsp.lua:21-23`) override `gen_clues.g()` with their own descs.
+- A mapping with **no** `desc` sets the entry to `''` and wipes any clue for that key. Not a
+  problem here — every mapping in `keymaps.lua` has a `desc`.
+
+#### What is decorated today, and what is missing
+
+Matching your descriptions against which-key's rule list (`which-key.nvim/lua/which-key/icons.lua:16-56`):
+
+Already covered by a rule — `buffer`, `file`, `find`, `diagnostic`, `code`, `toggle`, `window`.
+
+**Not matched by any rule** (these are the "missing" ones, and they are most of your Git and
+LSP mappings): `Rename symbol`, `References`, `Document symbols`, `Workspace symbols`,
+`Implementations`, `Added diff`, `Commit`, `Commit amend`, `Diff`, `Log`, `Show at cursor`,
+`Show at selection`, `[B]lame line`, `Live grep`, `Fuzzy grep`, `Grep word / selection`, `Help`.
+
+Worth knowing: the `%f[%a]git` rule needs the literal word "git" in the description, and none of
+your Git descriptions contain it. What the Git group actually gets today is the *`buffer`* rule
+firing on `Added diff buffer`, `Diff buffer` and `Log buffer` — a file icon on three Git
+mappings, which is simply wrong. Moving to explicit glyphs fixes that mislabelling as a side
+effect.
+
+#### Proposed glyphs
+
+Nerd Font names are given so any glyph that renders as tofu can be swapped from a cheat sheet
+without guessing. Where which-key already had a sensible choice it is reused, so the popup looks
+familiar. `󰊢` for Git is deliberate — it is the glyph already used in the blame float
+(`keymaps.lua:109`).
+
+Groups — these go in `clues`:
+
+| Prefix | Description | Glyph | Nerd Font name |
+|---|---|---|---|
+| `<leader>b` | `󰈔 +[B]uffers` | 󰈔 | nf-md-file_document |
+| `<leader>c` | ` +[C]ode` |  | nf-fa-code |
+| `<leader>d` | `󱖫 +[D]iagnostics` | 󱖫 | nf-md-monitor_eye |
+| `<leader>f` | ` +[F]iles / Find` |  | nf-fa-search |
+| `<leader>g` | `󰊢 +[G]it` | 󰊢 | nf-md-source_branch |
+| `<leader>T` | ` +[T]oggle common options` |  | nf-fa-toggle_on |
+
+Leaves — these go in the `desc` of each `vim.keymap.set` call:
+
+| Mapping | New description | Nerd Font name |
+|---|---|---|
+| `<leader>bb` | `󰈔 Switch buffer` | nf-md-file_document |
+| `<leader>bd` | `󰅖 Delete buffer` | nf-md-close |
+| `<leader>bn` | `󰒭 Next buffer` | nf-md-skip_next |
+| `<leader>bp` | `󰒮 Previous buffer` | nf-md-skip_previous |
+| `<leader>db` | `󱖫 Buffer diagnostics` | nf-md-monitor_eye |
+| `<leader>dw` | `󱖫 Workspace diagnostics` | nf-md-monitor_eye |
+| `<leader>dd` | `󰋽 Diagnostic details` | nf-md-information |
+| `<leader>ca` | `󰌵 Code action` | nf-md-lightbulb |
+| `<leader>cr` | `󰑕 Rename symbol` | nf-md-rename_box |
+| `<leader>cR` | `󰌹 References` | nf-md-link_variant |
+| `<leader>cs` | `󰙅 Document symbols` | nf-md-file_tree |
+| `<leader>cS` | `󰠭 Workspace symbols` | nf-md-view_list |
+| `<leader>ci` | `󰡱 Implementations` | nf-md-function_variant |
+| `<leader>ga` | ` Added diff` | nf-oct-diff_added |
+| `<leader>gA` | ` Added diff buffer` | nf-oct-diff_added |
+| `<leader>gc` | ` Commit` | nf-oct-git_commit |
+| `<leader>gC` | ` Commit amend` | nf-oct-git_commit |
+| `<leader>gd` | ` Diff` | nf-oct-diff |
+| `<leader>gD` | ` Diff buffer` | nf-oct-diff |
+| `<leader>gl` | ` Log` | nf-fa-history |
+| `<leader>gL` | ` Log buffer` | nf-fa-history |
+| `<leader>go` | ` Toggle overlay` | nf-fa-eye |
+| `<leader>gs` | ` Show at cursor` / `Show at selection` | nf-fa-info_circle |
+| `<leader>gb` | `󰊢 Blame line` | nf-md-source_branch |
+| `<leader>fe` | ` Toggle file explorer` | nf-fa-folder_open |
+| `<leader>fm` | `󰉋 Toggle mini.files` | nf-md-folder |
+| `<leader>ff` | ` Find files` | nf-fa-search |
+| `<leader>fg` | `󰱼 Live grep` | nf-md-file_search |
+| `<leader>fz` | `󰱼 Fuzzy grep` | nf-md-file_search |
+| `<leader>fw` | `󰱼 Grep word / selection` | nf-md-file_search |
+| `<leader>fd` | `󰉖 Find directories` | nf-md-folder_search |
+| `<leader>h` | `󰋖 Help` | nf-md-help_circle_outline |
+
+While editing `<leader>gb`, drop the `[B]` bracket from `[B]lame line` for consistency with the
+other Git descriptions, and move the stray `-- Files / Find` comment off the end of
+`keymaps.lua:152` to above the `nvimtree_toggle` function where it belongs.
+
+#### One prerequisite
+
+Flip `vim.g.have_nerd_font` to `true` at `options.lua:1`. It is currently `false` while the config
+already relies on Nerd Font glyphs in the statusline (`ui.lua:26-39`), the blame float
+(`keymaps.lua:109`) and blink's `nerd_font_variant = "mono"` — so the flag is already inaccurate,
+and adding icons to descriptions makes it more so. Plugins that respect it will stop degrading to
+ASCII fallbacks.
+
 ## Things to watch after the swap
 
 These are consequences of mini.clue's trigger model, not bugs. Each has a one-line escape hatch.
@@ -180,3 +295,9 @@ These are consequences of mini.clue's trigger model, not bugs. Each has a one-li
 7. **Confirm nothing is swallowed.** Type quickly without pausing: `<leader>ff` opens the fff
    picker, `gd` jumps to definition, `zz` centers the line, `"ayy` yanks to register `a`. mini.clue
    must not intercept any of these when typed at speed.
+
+8. **Check every glyph renders.** Open each leader group and scan for tofu boxes (`􏿽`) or
+   double-width smearing that misaligns the `│` separator column. Any glyph that fails gets
+   swapped from the Nerd Font cheat sheet using the `nf-*` name in the table above. Pay particular
+   attention to the `nf-md-*` glyphs (`󰱼`, `󰡱`, `󰠭`, `󰉖`), which live in a higher plane than the
+   FontAwesome ones and are the likeliest to be absent from an older patched font.
