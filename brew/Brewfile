@@ -2,6 +2,8 @@
 
 # Terminal
 cask "ghostty"
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
 
 # CLI Tools
 brew "zoxide"

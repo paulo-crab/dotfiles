@@ -1,6 +1,9 @@
 #!/usr/bin/env zsh
 set -euo pipefail
 
+# Load env variables
+source "$(dirname "$0")/zsh/env.sh"
+
 REPO_DIR=$PWD
 BACKUP_SUFFIX=".before-dotfiles.$(date +%Y%m%d-%H%M%S)"
 
