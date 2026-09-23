@@ -61,6 +61,15 @@ map("n", "<leader>ff", function() fff.find_files() end, { desc = "Find files" })
 map("n", "<leader>fg", function() fff.live_grep() end, { desc = "Live grep" })
 map("n", "<leader>fz", function() fff.live_grep({ grep = { modes = { "fuzzy", "plain" } } }) end, { desc = "Fuzzy grep" })
 map({ "n", "x" }, "<leader>fw", function() fff.live_grep_under_cursor() end, { desc = "Grep word / selection" })
+vim.keymap.set("n", "<leader>fd", function()
+  fff.find_files({
+    prompt = "Directories: ",
+    transform = function(item)
+      -- Keep only entries whose path is a directory
+      return vim.fn.isdirectory(item.path) == 1
+    end,
+  })
+end, { desc = "Find directories" })
 
 -- Help
 map("n", "<leader>h", function() MiniPick.builtin.help() end, { desc = "Help" })
