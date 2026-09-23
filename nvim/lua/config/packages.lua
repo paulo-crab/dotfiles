@@ -8,7 +8,8 @@ PackAdd("dmtrKovalenko/fff")
 PackAdd("nvim-tree/nvim-tree.lua")
 
 PackAdd("stevearc/conform.nvim", "stable")	
-PackAdd("saghen/blink.cmp", "v1.10.2")
+
+PackAdd("saghen/blink.cmp", "v1.*`")
 
 -- UI
 PackAdd("catppuccin/nvim")
