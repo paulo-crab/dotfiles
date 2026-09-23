@@ -47,6 +47,6 @@ fi
 if [[ -L "$XDG_CONFIG_HOME/eza/theme.yml" ]]; then
     echo "eza theme is already set up"
 else    
-    echo "Setting up eza theme: $EZA_THEME"
-    zsh "$REPO_DIR/eza/setup.zsh"
+    echo "Setting up eza theme: $THEME"
+    zsh "$REPO_DIR/eza/setup.sh"
 fi

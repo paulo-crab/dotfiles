@@ -1,6 +1,11 @@
 PackAdd = function(package, version) 
-	version = version or "main"	
+	
+	local spec = { src = "https://github.com/" .. package }
 
-	vim.pack.add({{ src = "http://github.com/" .. package, version = version }})
+  if version then
+    spec.version = version
+  end
+
+  vim.pack.add({ spec })	
 end		
-
+	

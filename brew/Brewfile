@@ -20,7 +20,7 @@ brew "tree-sitter-cli"
 
 # MacOS essentials
 cask "bettertouchtool"
-cask "contexts"
+# cask "contexts"
 cask "bleunlock"
 cask "rectangle-pro"
 cask "karabiner-elements"

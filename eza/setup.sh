@@ -1,5 +1,7 @@
 theme=$THEME
 
+echo("Setting eza theme to: $THEME")
+
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export EZA_CONFIG_DIR="$XDG_CONFIG_HOME/eza"
