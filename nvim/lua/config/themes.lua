@@ -2,13 +2,6 @@ require("catppuccin").setup({
 	flavour = "catppuccin-macchiato",
 })
 
-vim.opt.guicursor = table.concat({
-	"n-v-c:block-Cursor",
-	"i-ci-ve:ver25-Cursor",
-	"r-cr:hor20-Cursor",
-	"o:hor50-Cursor",
-}, ",")
-
 local dark_theme = "catppuccin-macchiato"
 local light_theme = "gruvbox"
 

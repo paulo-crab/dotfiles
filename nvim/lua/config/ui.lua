@@ -9,8 +9,18 @@ M.blink = {
 }
 
 local function apply_highlights()
-	-- Swap the active theme's Normal colors for a visible block and insert cursor.
-	vim.api.nvim_set_hl(0, "Cursor", { fg = "bg", bg = "fg" })
+	-- A TUI cursor uses the highlight background for its color. DiagnosticInfo
+	-- provides an accent in both light and dark themes without a fixed palette.
+	local info = vim.api.nvim_get_hl(0, { name = "DiagnosticInfo", link = false })
+	vim.api.nvim_set_hl(0, "InsertCursor", { fg = "bg", bg = info.fg or "fg" })
+
+	-- Light themes can use the softer statusline surface for the block cursor;
+	-- invert Normal on dark themes where that surface can blend into the buffer.
+	if vim.o.background == "light" then
+		vim.api.nvim_set_hl(0, "Cursor", { link = "StatusLine" })
+	else
+		vim.api.nvim_set_hl(0, "Cursor", { fg = "bg", bg = "fg" })
+	end
 	vim.api.nvim_set_hl(0, "TermCursor", { link = "Cursor" })
 
 	-- Use the theme's selected-menu treatment for the active buffer tab.
@@ -114,6 +124,15 @@ local function setup_tabline()
 end
 
 function M.setup()
+	-- Keep Insert mode's bar shape, with a little more width and no blinking.
+	vim.opt.guicursor = table.concat({
+		"n-v-c:block-Cursor",
+		"i-ci-ve:ver35-InsertCursor",
+		"r-cr:hor20-Cursor",
+		"o:hor50-Cursor",
+		"a:blinkon0",
+	}, ",")
+
 	vim.o.winborder = "rounded"
 	vim.o.pumborder = "rounded"
 	vim.opt.fillchars:append({ vert = "│" })
