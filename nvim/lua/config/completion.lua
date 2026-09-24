@@ -1,3 +1,22 @@
+require("nvim-treesitter").install({
+	"c_sharp",
+	"markdown",
+	"markdown_inline",
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = {
+		"cs",
+		"markdown",
+		"lua",
+	},
+	callback = function()
+		vim.treesitter.start()
+	end,
+})
+
+local ui = require("config.ui")
+
 require("blink.cmp").setup({
 	completion = {
 		documentation = {
@@ -7,30 +26,18 @@ require("blink.cmp").setup({
 			treesitter_highlighting = true,
 
 			window = {
-				border = "rounded",
 				max_width = 70,
 				max_height = 18,
 				scrollbar = true,
-				winhighlight = table.concat({
-					"Normal:BlinkCmpDoc",
-					"FloatBorder:BlinkCmpDocBorder",
-					"EndOfBuffer:BlinkCmpDoc",
-				}, ","),
+				winhighlight = ui.blink.documentation,
 			},
 		},
 
 		menu = {
-			border = "rounded",
 			max_height = 12,
 			scrollbar = false,
 
-			winhighlight = table.concat({
-				"Normal:BlinkCmpMenu",
-				"FloatBorder:BlinkCmpMenuBorder",
-				"CursorLine:BlinkCmpMenuSelection",
-				"Search:None",
-				"CurSearch:None",
-			}, ","),
+			winhighlight = ui.blink.menu,
 
 			draw = {
 				padding = 1,
@@ -48,7 +55,7 @@ require("blink.cmp").setup({
 					kind_icon = {
 						text = function(ctx)
 							if ctx.source_name ~= "Path" then
-								return require("lspkind").symbol_map[ctx.kind] or ctx.kind_icon
+								return ctx.kind_icon .. ctx.icon_gap
 							end
 
 							local data = ctx.item.data or {}
@@ -89,6 +96,7 @@ require("blink.cmp").setup({
 						text = function(ctx)
 							return ctx.kind
 						end,
+
 						highlight = function(ctx)
 							return ctx.kind_hl
 						end,
@@ -98,6 +106,7 @@ require("blink.cmp").setup({
 						text = function(ctx)
 							return "[" .. ctx.source_name .. "]"
 						end,
+
 						highlight = "Comment",
 					},
 
@@ -126,16 +135,12 @@ require("blink.cmp").setup({
 		enabled = true,
 
 		window = {
-			border = "rounded",
 			max_width = 80,
 			max_height = 10,
 			scrollbar = false,
 			treesitter_highlighting = true,
 
-			winhighlight = table.concat({
-				"Normal:BlinkCmpSignatureHelp",
-				"FloatBorder:BlinkCmpSignatureHelpBorder",
-			}, ","),
+			winhighlight = ui.blink.signature,
 		},
 	},
 })

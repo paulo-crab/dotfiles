@@ -1,7 +1,5 @@
 require("mini.icons").setup()
-require("mini.files").setup()
-require("mini.pick").setup()
+require("mini.icons").mock_nvim_web_devicons()
 require("mini.extra").setup()
-require("mini.statusline").setup()
 require("mini.git").setup()
 require("mini.diff").setup()

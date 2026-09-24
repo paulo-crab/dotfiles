@@ -19,8 +19,6 @@ vim.g.fff = {
 	},
 }
 
-require("mini.icons").mock_nvim_web_devicons()
-
 require("nvim-tree").setup({
 	renderer = {
 		icons = {

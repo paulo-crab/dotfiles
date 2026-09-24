@@ -10,5 +10,4 @@ require("config.completion")
 require("config.lsp")
 
 require("config.themes")
-require("config.diagnostics")
-require("config.ui")
+require("config.ui").setup()

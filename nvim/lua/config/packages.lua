@@ -7,9 +7,8 @@ PackAdd("dmtrKovalenko/fff")
 PackAdd("nvim-tree/nvim-tree.lua")
 
 PackAdd("stevearc/conform.nvim", "stable")
-PackAdd("saghen/blink.cmp", "v1.*")
-PackAdd("onsails/lspkind.nvim")
--- PackAdd("nvim-treesitter/nvim-treesitter")
+PackAdd("saghen/blink.cmp", "v1")
+PackAdd("nvim-treesitter/nvim-treesitter")
 
 -- UI
 PackAdd("catppuccin/nvim")
