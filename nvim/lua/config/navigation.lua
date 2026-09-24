@@ -1,54 +1,63 @@
 -- FFF: Fast File Finder
-vim.api.nvim_create_autocmd('PackChanged', {
-  callback = function(event)
-    if event.data.updated then
-      require('fff.download').download_or_build_binary()
-    end
-  end,
+vim.api.nvim_create_autocmd("PackChanged", {
+	callback = function(event)
+		if event.data.updated then
+			require("fff.download").download_or_build_binary()
+		end
+	end,
 })
 
 -- the plugin will automatically lazy load
 vim.g.fff = {
-  lazy_sync = true, -- start syncing only when the picker is open
-  debug = {
-    enabled = true,
-    show_scores = true,
-  },
+	lazy_sync = true, -- start syncing only when the picker is open
+	git = {
+		status_text_color = true,
+	},
+	debug = {
+		enabled = false,
+		show_scores = false,
+	},
 }
 
 require("mini.icons").mock_nvim_web_devicons()
 
 require("nvim-tree").setup({
-renderer = {
-    icons = {
-      show = {
-        file = true,
-        folder = true,
-        folder_arrow = true,
-        git = true,
-      },
-    },
-  },
+	renderer = {
+		icons = {
+			show = {
+				file = true,
+				folder = true,
+				folder_arrow = true,
+				git = true,
+			},
+		},
+	},
 })
-
-vim.keymap.set(
-  'n',
-  'ff',
-  function() require('fff').find_files() end,
-  { desc = 'FFFind files' }
-)
 
 -- mini.pick
 
-require("mini.pick").setup({mappings = {
-    move_down = "<M-j>",
-    move_up = "<M-k>",
-    choose = "<M-l>",
-  }}
-)
+local MiniPick = require("mini.pick")
+
+MiniPick.setup({
+	mappings = {
+		move_down = "<M-j>",
+		move_up = "<M-k>",
+		-- Built-in mapping fields hold a single key, so `choose` keeps its default
+		-- `<CR>` and `<M-l>` is added as a custom action doing the same thing.
+		choose_alt = {
+			char = "<M-l>",
+			func = function()
+				local item = MiniPick.get_picker_matches().current
+				if item == nil then return true end
+				local ok, res = pcall(MiniPick.get_picker_opts().source.choose, item)
+				-- Stop the picker unless `choose` asked to keep it open.
+				return not (ok and res)
+			end,
+		},
+	},
+})
 
 require("mini.files").setup()
-
 
 -- Default Options
 --
@@ -64,7 +73,7 @@ require("mini.files").setup()
 --     -- Order in which to show file system entries
 --     sort = nil,
 --   },
--- 
+--
 --   -- Module mappings created only inside explorer.
 --   -- Use `''` (empty string) to not create one.
 --   mappings = {
@@ -82,7 +91,7 @@ require("mini.files").setup()
 --     trim_left   = '<',
 --     trim_right  = '>',
 --   },
--- 
+--
 --   -- General options
 --   options = {
 --     -- Whether to delete permanently or move into module-specific trash
@@ -92,7 +101,7 @@ require("mini.files").setup()
 --     -- Timeout for synchronous LSP integration requests
 --     lsp_timeout = 1000,
 --   },
--- 
+--
 --   -- Customization of explorer windows
 --   windows = {
 --     -- Maximum number of windows to show side by side
@@ -107,3 +116,6 @@ require("mini.files").setup()
 --     width_preview = 25,
 --   },
 -- }
+--
+--
+--

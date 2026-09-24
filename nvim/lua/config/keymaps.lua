@@ -1,6 +1,9 @@
 local map = vim.keymap.set
 
+-- `fff.setup()` only assigns `vim.g.fff` and returns nothing, so the options
+-- live in `config.navigation` and this is just the module handle.
 local fff = require("fff")
+
 local MiniPick = require("mini.pick")
 local MiniFiles = require("mini.files")
 local MiniExtra = require("mini.extra")
@@ -161,7 +164,7 @@ map("n", "<leader>fe", nvimtree_toggle, { desc = "Toggle file explorer" })
 map("n", "<leader>fm", function()
 	MiniFiles.open()
 end, { desc = "Toggle mini.files" })
-map("n", "<leader>ff", function()
+map("n", "<leader><leader>", function()
 	fff.find_files()
 end, { desc = "Find files" })
 map("n", "<leader>fg", function()
@@ -173,14 +176,20 @@ end, { desc = "Fuzzy grep" })
 map({ "n", "x" }, "<leader>fw", function()
 	fff.live_grep_under_cursor()
 end, { desc = "Grep word / selection" })
-vim.keymap.set("n", "<leader>fd", function()
-	fff.find_files({
-		prompt = "Directories: ",
-		transform = function(item)
-			-- Keep only entries whose path is a directory
-			return vim.fn.isdirectory(item.path) == 1
-		end,
-	})
+-- fff indexes files only and its `find_files` takes no filter callback, so
+-- directories come from `fd` through mini.pick instead.
+map("n", "<leader>fd", function()
+	MiniPick.builtin.cli(
+		{ command = { "fd", "--type", "d", "--hidden", "--exclude", ".git" } },
+		{
+			source = {
+				name = "Directories",
+				choose = function(item)
+					MiniFiles.open(item)
+				end,
+			},
+		}
+	)
 end, { desc = "Find directories" })
 
 -- Help
