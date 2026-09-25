@@ -5,7 +5,7 @@
 # it reads these once at source time (`: ${VAR:=default}`) and ignores changes
 # made afterward.
 export DEJA_CYCLE_KEY='^N'          # cycle alternative suggestions (was Tab)
-export DEJA_WORD_ACCEPT_KEY='^K'    # accept next word only
+export DEJA_WORD_ACCEPT_KEY=        # unbound — freed for vim-style Ctrl+K history nav below
 export DEJA_ACCEPT_KEY='^L'         # accept full suggestion
 export DEJA_CYCLE_FUZZY_KEY=        # Shift+→ next fuzzy preset — unbound
 export DEJA_CYCLE_FUZZY_BACK_KEY=   # Shift+← previous fuzzy preset — unbound
@@ -22,6 +22,12 @@ if command -v deja >/dev/null 2>&1 && (( ! ${+functions[_deja_line_init]} )); th
     eval "$(deja init zsh)"
   fi
 fi
+
+# Vim-style history navigation (j = down, k = up).
+# Overrides zsh defaults: Ctrl+J is normally an accept-line alternate to Enter,
+# Ctrl+K is normally kill-line (delete to end of line, now freed from deja above).
+bindkey '^J' down-line-or-history
+bindkey '^K' up-line-or-history
 
 # Syntax highlighting must be sourced last
 source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
