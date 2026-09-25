@@ -1,8 +1,27 @@
 # .configh/zsh/plugins.zsh
 #
 
-# Autosuggestions
-source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+# Deja key rebinds — must be exported *before* deja's init script loads below;
+# it reads these once at source time (`: ${VAR:=default}`) and ignores changes
+# made afterward.
+export DEJA_CYCLE_KEY='^N'          # cycle alternative suggestions (was Tab)
+export DEJA_WORD_ACCEPT_KEY='^K'    # accept next word only
+export DEJA_ACCEPT_KEY='^L'         # accept full suggestion
+export DEJA_CYCLE_FUZZY_KEY=        # Shift+→ next fuzzy preset — unbound
+export DEJA_CYCLE_FUZZY_BACK_KEY=   # Shift+← previous fuzzy preset — unbound
+export DEJA_TOGGLE_EMPTY_KEY=       # Shift+↑ flip empty-prompt suggestions — unbound
+
+# Deja (predictive autosuggestions, replaces zsh-autosuggestions)
+# Guarded against re-sourcing this file in a live shell (e.g. `source ~/.zshrc`),
+# which otherwise hits an upstream FUNCNEST recursion bug in deja's init script:
+# https://github.com/Giammarco-Ferranti/deja/issues/96
+if command -v deja >/dev/null 2>&1 && (( ! ${+functions[_deja_line_init]} )); then
+  if [[ -r "$HOME/.local/share/deja/init.zsh" ]]; then
+    source "$HOME/.local/share/deja/init.zsh"
+  else
+    eval "$(deja init zsh)"
+  fi
+fi
 
 # Syntax highlighting must be sourced last
 source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
