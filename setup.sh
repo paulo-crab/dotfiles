@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Load env variables
-source "$(dirname "$0")/zsh/env.sh"
+source "$(dirname "$0")/zsh/env.zsh"
 
 REPO_DIR=$PWD
 BACKUP_SUFFIX=".before-dotfiles.$(date +%Y%m%d-%H%M%S)"
@@ -49,7 +49,7 @@ fi
 
 if [[ -L "$XDG_CONFIG_HOME/eza/theme.yml" ]]; then
     echo "eza theme is already set up"
-else    
+else
     echo "Setting up eza theme: $THEME"
     zsh "$REPO_DIR/eza/setup.sh"
 fi
