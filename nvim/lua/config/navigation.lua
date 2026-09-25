@@ -20,7 +20,16 @@ vim.g.fff = {
 }
 
 require("nvim-tree").setup({
+	diagnostics = {
+		enable = true,
+		show_on_dirs = true,
+		severity = {
+			min = vim.diagnostic.severity.ERROR,
+			max = vim.diagnostic.severity.ERROR,
+		},
+	},
 	renderer = {
+		highlight_diagnostics = true,
 		icons = {
 			show = {
 				file = true,
@@ -46,7 +55,9 @@ MiniPick.setup({
 			char = "<M-l>",
 			func = function()
 				local item = MiniPick.get_picker_matches().current
-				if item == nil then return true end
+				if item == nil then
+					return true
+				end
 				local ok, res = pcall(MiniPick.get_picker_opts().source.choose, item)
 				-- Stop the picker unless `choose` asked to keep it open.
 				return not (ok and res)

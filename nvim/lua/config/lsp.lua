@@ -27,3 +27,5 @@ vim.api.nvim_create_autocmd("LspAttach", {
 -- Each server's full config (cmd, filetypes, root_markers, settings, ...) lives in
 -- its own file under lsp/<name>.lua (auto-loaded from runtimepath). This just enables them.
 vim.lsp.enable({ "roslyn", "lua_ls" })
+
+vim.diagnostic.config({ virtual_text = true })
