@@ -8,3 +8,15 @@ alias tree='eza --tree'
 alias cpdir='cp -R'
 alias cat='bat'
 #alias cd='z'
+
+vc() {
+  local file
+  file=$(fd --type f --hidden . "$HOME/.config/nvim" | fzf --preview 'bat --color=always --style=numbers --line-range=:200 {}') || return
+  nvim "$file"
+}
+
+zc() {
+  local file
+  file=$(fd --type f --hidden --no-ignore . "$ZDOTDIR" | fzf --preview 'bat --color=always --style=numbers --line-range=:200 {}') || return
+  nvim "$file"
+}
