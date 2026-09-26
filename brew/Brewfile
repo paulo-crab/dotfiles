@@ -2,7 +2,7 @@
 
 # Terminal
 cask "ghostty"
-brew "zsh-autosuggestions"
+brew "Giammarco-Ferranti/deja/deja"
 brew "zsh-syntax-highlighting"
 
 # CLI Tools
@@ -12,6 +12,7 @@ brew "fzf"
 brew "ripgrep"
 brew "bat"
 brew "eza"
+brew "lazygit"
 
 # Music Player
 brew "cmus"

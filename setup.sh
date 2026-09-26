@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Load env variables
-source "$(dirname "$0")/zsh/env.sh"
+source "$(dirname "$0")/zsh/env.zsh"
 
 REPO_DIR=$PWD
 BACKUP_SUFFIX=".before-dotfiles.$(date +%Y%m%d-%H%M%S)"
@@ -43,13 +43,22 @@ else
   exit 1
 fi
 
+# Third-party taps in the Brewfile (not homebrew-core/homebrew-cask) require an
+# explicit trust grant before `brew bundle` can install from them.
+brew trust --formula giammarco-ferranti/deja/deja
+
 if [[ -f "$REPO_DIR/brew/Brewfile" ]]; then
   brew bundle --file="$REPO_DIR/brew/Brewfile"
 fi
 
+if [[ ! -f "$HOME/.local/share/deja/deja.db" ]]; then
+  echo "Importing zsh history into deja..."
+  deja import
+fi
+
 if [[ -L "$XDG_CONFIG_HOME/eza/theme.yml" ]]; then
     echo "eza theme is already set up"
-else    
+else
     echo "Setting up eza theme: $THEME"
     zsh "$REPO_DIR/eza/setup.sh"
 fi

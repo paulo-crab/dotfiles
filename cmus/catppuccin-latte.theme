@@ -1,0 +1,51 @@
+# Catppuccin Latte (light) for 256-color terminals.
+# Palette: https://github.com/catppuccin/palette (v1.8.0)
+# Colors approximate the official hex palette in xterm-256. Green is darkened
+# slightly so the currently playing track remains legible on light backgrounds.
+
+# Command line and messages
+set color_cmdline_bg=255
+set color_cmdline_fg=239
+set color_cmdline_attr=default
+set color_error=160
+set color_info=30
+
+# Status and progress
+set color_statusline_bg=254
+set color_statusline_fg=60
+set color_statusline_attr=default
+set color_statusline_progress_bg=27
+set color_statusline_progress_fg=255
+set color_statusline_progress_attr=bold
+
+# Currently playing title
+set color_titleline_bg=252
+set color_titleline_fg=93
+set color_titleline_attr=bold
+
+# Library, playlist, queue, and browser
+set color_separator=247
+set color_win_bg=255
+set color_win_fg=239
+set color_win_attr=default
+set color_win_dir=27
+set color_win_cur=28
+set color_win_cur_attr=bold
+set color_win_sel_bg=27
+set color_win_sel_fg=255
+set color_win_sel_attr=bold
+set color_win_cur_sel_bg=93
+set color_win_cur_sel_fg=255
+set color_win_cur_sel_attr=bold
+set color_win_inactive_sel_bg=250
+set color_win_inactive_sel_fg=239
+set color_win_inactive_sel_attr=default
+set color_win_inactive_cur_sel_bg=252
+set color_win_inactive_cur_sel_fg=22
+set color_win_inactive_cur_sel_attr=bold
+set color_win_title_bg=254
+set color_win_title_fg=239
+set color_win_title_attr=bold
+set color_trackwin_album_bg=252
+set color_trackwin_album_fg=239
+set color_trackwin_album_attr=bold
