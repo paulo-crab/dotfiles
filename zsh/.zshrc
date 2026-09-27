@@ -6,6 +6,7 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 [[ -f "$ZDOTDIR/functions.zsh" ]] && source "$ZDOTDIR/functions.zsh"
 [[ -f "$ZDOTDIR/env.zsh" ]] && source "$ZDOTDIR/env.zsh"
 [[ -f "$ZDOTDIR/local.zsh" ]] && source "$ZDOTDIR/local.zsh"
+[[ -f "$ZDOTDIR/.secrets.zsh" ]] && source "$ZDOTDIR/.secrets.zsh"	
 
 #options
 setopt append_history
