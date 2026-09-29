@@ -24,7 +24,7 @@ link() {
   echo "Linked: $destination_path → $source_path"
 }
 
-link "$REPO_DIR/home/.zshenv" "$HOME/.zshenv"
+link "$REPO_DIR/zsh/.zshenv" "$HOME/.zshenv"
 link "$REPO_DIR/zsh" "$HOME/.config/zsh"
 link "$REPO_DIR/nvim" "$HOME/.config/nvim"
 link "$REPO_DIR/starship.toml" "$HOME/.config/starship.toml"
