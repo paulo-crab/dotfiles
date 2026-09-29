@@ -1,4 +1,4 @@
-# Brewfile
+#G Brewfile
 
 # Terminal
 cask "ghostty"
@@ -26,5 +26,3 @@ cask "bettertouchtool"
 # cask "contexts"
 cask "bleunlock"
 cask "rectangle-pro"
-cask "karabiner-elements"
-

@@ -1,0 +1,179 @@
+;; Tap Space for a space; hold 220 ms for navigation. Caps remains available.
+;; Caps: ,=Delete, B/W=word, 0/4/$=line, U/D=page, G/T=document, [=Escape, M=Backspace, X=Ctrl+D.
+;; Kanata starter for macOS + US/UK QWERTY key positions.
+;; CAGS: A/S/D/F -> Control/Option/Command/Shift when held.
+;; Mirrored: J/K/L/; -> Shift/Command/Option/Control when held.
+;; Tap the keys normally to type their usual characters.
+;; The ; key is the physical key immediately to the right of L.
+;; Use the U.S. macOS input source for the Swedish character shortcuts.
+;; Hold Left Option for [=å, ;=ö, '=ä; add Shift for capitals. No toggle.
+;; Tap Caps Lock for Escape; hold for H/J/K/L arrows, Space=Backspace, N=Return.
+;; Tap Tab normally; hold bare Tab 250 ms for Homerow (Shift+Command+Space).
+;; Right Command + H/J/K/L also navigates. Other Right Command shortcuts work.
+;; Microsoft keyboard: physical Alt -> Command; physical Windows -> Option.
+;; On that keyboard, Right Alt is Right Command and also activates navigation.
+;; Reload saved configuration: Control + Shift + R (hold A for Control).
+;; Plain Control + R stays available for fzf/history. Release keys after reload.
+;; Exit any time: hold PHYSICAL Left Control + Space + Escape together.
+
+(defcfg
+  process-unmapped-keys yes
+)
+
+;; Each layer below follows this exact key order.
+(defsrc
+  caps a s d f g h j k l ; [ ' r
+  lalt lmet ralt rmet
+ spc n tab
+  , b w 0 4 u t m x)
+
+(defvar
+  tap-time 200
+  hold-time 220
+  typing-idle 150
+
+  ;; While deciding tap vs hold, another key from the same hand means "type".
+  ;; For a shortcut, use the modifier on the opposite hand from the next key.
+  left-hand-keys  (grv 1 2 3 4 5 q w e r t a s d f g z x c v b nubs)
+  right-hand-keys (6 7 8 9 0 - = y u i o p [ ] h j k l ; ' n m , . /)
+)
+
+;; Match your connected Microsoft keyboard (USB receiver 045e:07a5).
+;; Device 1 gets the Windows-keyboard modifier swap.
+(definputdevices
+  1 ((vendor_id 1118) (product_id 1957))
+)
+
+(defalias
+  ;; These wait for the hold timeout, rather than turning typing rolls into
+  ;; shortcuts. Recent typing also forces a normal letter via typing-idle.
+  a (tap-hold-tap-keys $tap-time $hold-time a lctl $left-hand-keys
+       (require-prior-idle $typing-idle))
+  s (tap-hold-tap-keys $tap-time $hold-time s lalt $left-hand-keys
+       (require-prior-idle $typing-idle))
+  d (tap-hold-tap-keys $tap-time $hold-time d lmet $left-hand-keys
+       (require-prior-idle $typing-idle))
+  f (tap-hold-tap-keys $tap-time $hold-time f lsft $left-hand-keys
+       (require-prior-idle $typing-idle))
+  j (tap-hold-tap-keys $tap-time $hold-time j rsft $right-hand-keys
+       (require-prior-idle $typing-idle))
+  k (tap-hold-tap-keys $tap-time $hold-time k rmet $right-hand-keys
+       (require-prior-idle $typing-idle))
+  l (tap-hold-tap-keys $tap-time $hold-time l ralt $right-hand-keys
+       (require-prior-idle $typing-idle))
+  semi (tap-hold-tap-keys $tap-time $hold-time ; rctl $right-hand-keys
+       (require-prior-idle $typing-idle))
+
+  ;; Swedish letters on the U.S. macOS input source.
+  ;; Hold Left Option at Swedish key positions: [=å, ;=ö, '=ä.
+  ;; Either Shift gives Å/Ä/Ö. Control remains a normal modifier.
+  ;; Use native U.S. Option/dead-key sequences. unmod keeps Control and
+  ;; other held modifiers out of the character sequence.
+  se-aa (fork (macro (unmod lalt a))
+             (macro (unmod lalt lsft a)) (lsft rsft))
+  se-ae (fork (macro (unmod lalt u) (unmod a))
+             (macro (unmod lalt u) (unmod lsft a)) (lsft rsft))
+  se-oe (fork (macro (unmod lalt u) (unmod o))
+             (macro (unmod lalt u) (unmod lsft o)) (lsft rsft))
+  ;; Only Left Option (optionally with Shift) invokes Swedish letters.
+  ;; Command, Control and Right Option combinations retain their US events.
+  se-ring (switch ((or lctl rctl lmet rmet ralt)) [ break
+                   (lalt) @se-aa break
+                   () [ break)
+  se-dia-o (switch ((or lctl rctl lmet rmet ralt)) ; break
+                   (lalt) @se-oe break
+                   () ; break)
+  se-dia-a (switch ((or lctl rctl lmet rmet ralt)) ' break
+                   (lalt) @se-ae break
+                   () ' break)
+
+  ;; Reserve only Control+Shift+R; Option/Command combinations pass through.
+  reload-r (switch
+    ((and (or lctl rctl) (or lsft rsft)
+          (not lalt ralt lmet rmet))) lrld break
+    () r break)
+
+  ;; Preserve the semicolon Control hold with Left Option. Choose case on
+  ;; key press so releasing Shift quickly does not change the resulting ö.
+  semi-oe (tap-hold-tap-keys $tap-time $hold-time
+             (macro (unmod lalt u) (unmod o)) rctl $right-hand-keys
+             (require-prior-idle $typing-idle))
+  semi-oe-cap (tap-hold-tap-keys $tap-time $hold-time
+                 (macro (unmod lalt u) (unmod lsft o)) rctl $right-hand-keys
+                 (require-prior-idle $typing-idle))
+  semi-option (switch ((or lctl rctl lmet rmet ralt)) @semi break
+                       ((and lalt (or lsft rsft))) @semi-oe-cap break
+                       (lalt) @semi-oe break
+                       () @semi break)
+
+  ;; These additions require Caps or activated Space navigation, preserving Right Command shortcuts.
+  ;; Motions retain Shift for selection; 4/$ consumes Shift for plain line end.
+  nav-delete (switch ((or (input real caps) nop0)) (unmod del) break () , break)
+  nav-word-left (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) lalt left) break () b break)
+  nav-word-right (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) lalt rght) break () w break)
+  nav-line-start (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) lmet left) break () 0 break)
+  nav-line-end (switch ((or (input real caps) nop0)) (unmod lmet rght) break () 4 break)
+  nav-page-up (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) pgup) break () u break)
+  nav-page-down (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) pgdn) break () d break)
+  nav-doc-end (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) lmet down) break () g break)
+  nav-doc-start (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) lmet up) break () t break)
+  nav-escape (switch ((or (input real caps) nop0)) (unmod esc) break () @se-ring break)
+  nav-backspace (switch ((or (input real caps) nop0)) (unmod bspc) break () m break)
+  nav-control-d (switch ((or (input real caps) nop0)) (unmod lctl d) break () x break)
+
+  ;; Caps+Space is plain Backspace; Right Command+Space stays Command+Space.
+  nav-space (switch ((input real caps)) (unmod bspc) break
+                    () spc break)
+  ;; Caps+N or held-Space+N sends Return; Right Command+N keeps its shortcut.
+  nav-enter (switch ((or (input real caps) nop0)) (unmod ret) break
+                    () n break)
+  ;; Bare Tab: tap for Tab; hold 250 ms to activate the Homerow app once.
+  ;; With any modifier already held, retain the ordinary Tab shortcut.
+  homerow (macro (unmod lsft lmet spc))
+  homerow-tab (switch
+    ((or lctl rctl lalt ralt lmet rmet lsft rsft)) tab break
+    () (tap-hold 200 250 tab @homerow) break)
+
+  nav (layer-while-held nav)
+  ;; Space: tap normally; hold 220 ms for the same full navigation as Caps.
+  ;; The internal marker distinguishes Space holds from Right Command nav.
+  space-nav (multi nop0 @nav)
+  ;; Preserve modifier+Space shortcuts when the modifier was held first.
+  space (switch
+    ((or lctl rctl lalt ralt lmet rmet lsft rsft)) spc break
+    () (tap-hold 200 220 spc @space-nav) break)
+
+  ;; Caps activates navigation immediately when the next key is pressed.
+  ;; It has no typing-idle rule, so navigation works straight after typing.
+  caps (tap-hold-press 200 200 esc @nav)
+
+  ;; Keep Right Command available for its other shortcuts, while adding nav.
+  rnav (multi rmet @nav)
+
+  ;; HID Alt is Option; HID Meta is Command on macOS. Outputs are not
+  ;; remapped a second time, so home-row Command holds still send Command.
+  left-alt  (switch ((device-history 1 1)) lmet break () lalt break)
+  left-win  (switch ((device-history 1 1)) lalt break () lmet break)
+  right-alt (switch ((device-history 1 1)) @rnav break () ralt break)
+  right-win (switch ((device-history 1 1)) ralt break () @rnav break)
+
+  ;; Remove Right Command from arrows; retain Shift/Option/Control selection.
+  left  (unmod (rmet) left)
+  down  (unmod (rmet) down)
+  up    (unmod (rmet) up)
+  right (unmod (rmet) rght)
+)
+
+(deflayer base
+  @caps @a @s @d @f g h @j @k @l @semi-option @se-ring @se-dia-a @reload-r
+  @left-alt @left-win @right-alt @right-win @space n @homerow-tab
+  , b w 0 4 u t m x
+)
+
+;; Home-row letters become plain letters in nav; J is immediately Down.
+;; Physical Shift + navigation selects text. `_` inherits the base action.
+(deflayer nav
+  _ a s @nav-page-down f @nav-doc-end @left @down @up @right @se-dia-o @nav-escape _ @reload-r
+  _ _ _ _ @nav-space @nav-enter _
+  @nav-delete @nav-word-left @nav-word-right @nav-line-start @nav-line-end @nav-page-up @nav-doc-start @nav-backspace @nav-control-d
+)
