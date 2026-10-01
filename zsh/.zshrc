@@ -24,3 +24,7 @@ HISTSIZE=1000000
 SAVEHIST=1000000
 bindkey '^K' up-line-or-history
 bindkey '^J' down-line-or-history
+
+#helper functions - AdminByReq
+# Focus Admin By Request, let me press Enter, then restore my window.
+source "/Users/paulo.sebastiao/.config/zsh/admin-by-request/sudo-hook.zsh"
