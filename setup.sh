@@ -51,6 +51,12 @@ if [[ -f "$REPO_DIR/brew/Brewfile" ]]; then
   brew bundle --file="$REPO_DIR/brew/Brewfile"
 fi
 
+if [[ -d "/Applications/Contexts.app" || -d "$HOME/Applications/Contexts.app" ]]; then
+  defaults import com.contextsformac.Contexts "$REPO_DIR/contexts/contexts.plist"
+else
+  echo "Contexts is not installed; skipping settings import."
+fi
+
 if [[ ! -f "$HOME/.local/share/deja/deja.db" ]]; then
   echo "Importing zsh history into deja..."
   deja import
