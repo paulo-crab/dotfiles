@@ -1,3 +1,6 @@
+;; Practice mode: press physical Control+Alt+GUI+V to toggle.
+;; Original modifiers, editing keys, Escape, arrows, Home/End, Page Up/Down
+;; are silent while active; use home-row modifiers and Caps/Space navigation.
 ;; Tap Space for a space; hold 220 ms for navigation. Caps remains available.
 ;; Caps: ,=Delete, B/W=word, 0/4/$=line, U/D=page, G/T=document, [=Escape, M=Backspace, X=Ctrl+D.
 ;; Kanata starter for macOS + US/UK QWERTY key positions.
@@ -6,7 +9,7 @@
 ;; Tap the keys normally to type their usual characters.
 ;; The ; key is the physical key immediately to the right of L.
 ;; Use the U.S. macOS input source for the Swedish character shortcuts.
-;; Hold Left Option for [=å, ;=ö, '=ä; add Shift for capitals. No toggle.
+;; Hold either Option for [=å, ;=ö, '=ä; add Shift for capitals. No toggle.
 ;; Tap Caps Lock for Escape; hold for H/J/K/L arrows, Space=Backspace, N=Return.
 ;; Tap Tab normally; hold bare Tab 250 ms for Homerow (Shift+Command+Space).
 ;; Right Command + H/J/K/L also navigates. Other Right Command shortcuts work.
@@ -25,11 +28,12 @@
   caps a s d f g h j k l ; [ ' r
   lalt lmet ralt rmet
  spc n tab
-  , b w 0 4 u t m x)
+  , b w 0 4 u t m x
+  v lctl rctl lsft rsft bspc del ret esc left rght up down home end pgup pgdn)
 
 (defvar
   tap-time 200
-  hold-time 220
+  hold-time 180
   typing-idle 150
 
   ;; While deciding tap vs hold, another key from the same hand means "type".
@@ -65,7 +69,7 @@
        (require-prior-idle $typing-idle))
 
   ;; Swedish letters on the U.S. macOS input source.
-  ;; Hold Left Option at Swedish key positions: [=å, ;=ö, '=ä.
+  ;; Hold either Option at Swedish key positions: [=å, ;=ö, '=ä.
   ;; Either Shift gives Å/Ä/Ö. Control remains a normal modifier.
   ;; Use native U.S. Option/dead-key sequences. unmod keeps Control and
   ;; other held modifiers out of the character sequence.
@@ -75,17 +79,33 @@
              (macro (unmod lalt u) (unmod lsft a)) (lsft rsft))
   se-oe (fork (macro (unmod lalt u) (unmod o))
              (macro (unmod lalt u) (unmod lsft o)) (lsft rsft))
-  ;; Only Left Option (optionally with Shift) invokes Swedish letters.
-  ;; Command, Control and Right Option combinations retain their US events.
-  se-ring (switch ((or lctl rctl lmet rmet ralt)) [ break
-                   (lalt) @se-aa break
+  ;; Either Option (optionally with Shift) invokes Swedish letters.
+  ;; Command and Control combinations retain their US key events.
+  se-ring (switch ((or lctl rctl lmet rmet)) [ break
+                   ((or lalt ralt)) @se-aa break
                    () [ break)
-  se-dia-o (switch ((or lctl rctl lmet rmet ralt)) ; break
-                   (lalt) @se-oe break
+  se-dia-o (switch ((or lctl rctl lmet rmet)) ; break
+                   ((or lalt ralt)) @se-oe break
                    () ; break)
-  se-dia-a (switch ((or lctl rctl lmet rmet ralt)) ' break
-                   (lalt) @se-ae break
+  se-dia-a (switch ((or lctl rctl lmet rmet)) ' break
+                   ((or lalt ralt)) @se-ae break
                    () ' break)
+
+  ;; Three physical modifiers + V toggle practice mode, even when their
+  ;; output is suppressed. On the Microsoft keyboard, Alt and Windows still
+  ;; count by their physical positions, regardless of the normal swap.
+  practice-on (switch
+    ((and (or (input real lctl) (input real rctl))
+          (or (input real lalt) (input real ralt))
+          (or (input real lmet) (input real rmet))))
+      (layer-switch practice) break
+    () v break)
+  practice-off (switch
+    ((and (or (input real lctl) (input real rctl))
+          (or (input real lalt) (input real ralt))
+          (or (input real lmet) (input real rmet))))
+      (layer-switch base) break
+    () v break)
 
   ;; Reserve only Control+Shift+R; Option/Command combinations pass through.
   reload-r (switch
@@ -93,7 +113,7 @@
           (not lalt ralt lmet rmet))) lrld break
     () r break)
 
-  ;; Preserve the semicolon Control hold with Left Option. Choose case on
+  ;; Preserve the semicolon Control hold with either Option. Choose case on
   ;; key press so releasing Shift quickly does not change the resulting ö.
   semi-oe (tap-hold-tap-keys $tap-time $hold-time
              (macro (unmod lalt u) (unmod o)) rctl $right-hand-keys
@@ -101,9 +121,9 @@
   semi-oe-cap (tap-hold-tap-keys $tap-time $hold-time
                  (macro (unmod lalt u) (unmod lsft o)) rctl $right-hand-keys
                  (require-prior-idle $typing-idle))
-  semi-option (switch ((or lctl rctl lmet rmet ralt)) @semi break
-                       ((and lalt (or lsft rsft))) @semi-oe-cap break
-                       (lalt) @semi-oe break
+  semi-option (switch ((or lctl rctl lmet rmet)) @semi break
+                       ((and (or lalt ralt) (or lsft rsft))) @semi-oe-cap break
+                       ((or lalt ralt)) @semi-oe break
                        () @semi break)
 
   ;; These additions require Caps or activated Space navigation, preserving Right Command shortcuts.
@@ -168,6 +188,7 @@
   @caps @a @s @d @f g h @j @k @l @semi-option @se-ring @se-dia-a @reload-r
   @left-alt @left-win @right-alt @right-win @space n @homerow-tab
   , b w 0 4 u t m x
+  @practice-on lctl rctl lsft rsft bspc del ret esc left rght up down home end pgup pgdn
 )
 
 ;; Home-row letters become plain letters in nav; J is immediately Down.
@@ -176,4 +197,36 @@
   _ a s @nav-page-down f @nav-doc-end @left @down @up @right @se-dia-o @nav-escape _ @reload-r
   _ _ _ _ @nav-space @nav-enter _
   @nav-delete @nav-word-left @nav-word-right @nav-line-start @nav-line-end @nav-page-up @nav-doc-start @nav-backspace @nav-control-d
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+)
+
+;; Practice mode preserves home-row modifiers and Caps/Space navigation.
+;; The original physical modifiers, editing keys, and movement keys are silent.
+;; Physical Control+Alt+GUI+V still switches back to base.
+(deflayer practice
+  @caps @a @s @d @f g h @j @k @l @semi-option @se-ring @se-dia-a @reload-r
+  XX XX XX XX @space n @homerow-tab
+  , b w 0 4 u t m x
+  @practice-off XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX
+)
+
+;; Number/symbol layer, defined but deliberately not bound to a key yet.
+;; Home row A through ; gives 1 through 0, with apostrophe giving -.
+;; Top row Q through ] gives the shifted US number-row symbols.
+;; Caps, Space, Tab, and the physical modifier swap keep their roles.
+(deflayermap (numbers-symbols)
+  caps @caps
+  spc @space
+  tab @homerow-tab
+  lalt @left-alt
+  lmet @left-win
+  ralt @right-alt
+  rmet @right-win
+  v @practice-on
+
+  a 1    s 2    d 3    f 4    g 5
+  h 6    j 7    k 8    l 9    ; 0    ' -
+
+  q S-1  w S-2  e S-3  r S-4  t S-5  y S-6
+  u S-7  i S-8  o S-9  p S-0  [ S--  ] S-=
 )
