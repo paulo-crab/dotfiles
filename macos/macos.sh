@@ -2,7 +2,7 @@
 
 # Keep the Dock hidden with a 24-hour hover delay
 defaults write com.apple.dock autohide -bool true
-defaults write com.apple.dock autohide-delay -float 2
+defaults write com.apple.dock autohide-delay -float 0.67
 
 # Show hidden files and folders, including /usr, /opt, /var, /sbin
 defaults write com.apple.finder AppleShowAllFiles -bool true
