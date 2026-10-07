@@ -101,14 +101,16 @@ local function setup_statusline()
 end
 
 local function setup_tabline()
-	require("mini.tabline").setup({ show_icons = false, tabpage_section = "right" })
+	require("mini.tabline").setup({ show_icons = true, tabpage_section = "right" })
 
 	local function refresh_tabline()
 		local file_buffers = 0
 		for _, buf in ipairs(vim.api.nvim_list_bufs()) do
 			if vim.bo[buf].buflisted and vim.bo[buf].buftype == "" then
 				file_buffers = file_buffers + 1
-				if file_buffers > 1 then break end
+				if file_buffers > 1 then
+					break
+				end
 			end
 		end
 
@@ -118,7 +120,9 @@ local function setup_tabline()
 	local group = vim.api.nvim_create_augroup("ConfigUiTabline", { clear = true })
 	vim.api.nvim_create_autocmd({ "BufAdd", "BufDelete", "BufEnter", "TabEnter", "TabClosed" }, {
 		group = group,
-		callback = function() vim.schedule(refresh_tabline) end,
+		callback = function()
+			vim.schedule(refresh_tabline)
+		end,
 	})
 	refresh_tabline()
 end
