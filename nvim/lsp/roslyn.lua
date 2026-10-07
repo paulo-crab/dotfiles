@@ -285,6 +285,7 @@
 --   },
 local uv = vim.uv
 local fs = vim.fs
+local roslyn_start_delay_ms = 1200
 
 local group = vim.api.nvim_create_augroup("lspconfig.roslyn_ls", { clear = true })
 
@@ -534,7 +535,27 @@ return {
 			end
 
 			if root_dir then
-				cb(root_dir)
+				for _, client in ipairs(vim.lsp.get_clients({ name = "roslyn", _uninitialized = true })) do
+					if client.config.root_dir == root_dir then
+						cb(root_dir)
+						return
+					end
+				end
+
+				-- Let the initial directory and file buffers settle before starting
+				-- Roslyn, which can make the first project open feel unresponsive.
+				vim.defer_fn(function()
+					if not vim.api.nvim_buf_is_valid(bufnr) then
+						return
+					end
+
+					-- A buffer may have been replaced while activation was deferred.
+					if vim.api.nvim_buf_get_name(bufnr) ~= bufname then
+						return
+					end
+
+					cb(root_dir)
+				end, roslyn_start_delay_ms)
 			end
 		else
 			-- Decompiled code (example: "/tmp/MetadataAsSource/f2bfba/DecompilationMetadataAsSourceFileProvider/d5782a/Console.cs")
@@ -583,6 +604,10 @@ return {
 			end,
 			desc = "roslyn_ls: refresh diagnostics",
 		})
+
+		-- A tree-open prestart may finish workspace initialization before any
+		-- C# buffer attaches, so request diagnostics for this buffer on attach.
+		refresh_diagnostics(client)
 	end,
 
 	capabilities = {
