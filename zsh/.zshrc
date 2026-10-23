@@ -19,7 +19,8 @@ setopt no_beep
 setopt inc_append_history
 
 # history
-HISTFILE=${ZDOTDIR}/.zsh_history
+HISTFILE="${XDG_STATE_HOME}/zsh/history"
+[[ -d "${XDG_STATE_HOME}/zsh" ]] || mkdir -p "${XDG_STATE_HOME}/zsh"
 HISTSIZE=1000000
 SAVEHIST=1000000
 bindkey '^K' up-line-or-history
