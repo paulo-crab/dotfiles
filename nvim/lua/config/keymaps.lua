@@ -14,12 +14,6 @@ map("i", "jk", "<Esc>", { desc = "Exit insert mode" })
 map("n", "n", "nzz", { desc = "Next search result centered" })
 map("n", "N", "Nzz", { desc = "Previous search result centered" })
 
--- Window navigation
-map("n", "<C-h>", "<C-w>h", { desc = "Window left" })
-map("n", "<C-j>", "<C-w>j", { desc = "Window down" })
-map("n", "<C-k>", "<C-w>k", { desc = "Window up" })
-map("n", "<C-l>", "<C-w>l", { desc = "Window right" })
-
 -- Buffer navigation
 map("n", "<leader>bb", function()
 	MiniPick.builtin.buffers()
@@ -29,7 +23,6 @@ map("n", "<leader>bn", "<cmd>bnext<cr>", { desc = "Next buffer" })
 map("n", "<leader>bp", "<cmd>bprevious<cr>", { desc = "Previous buffer" })
 
 -- LSP navigation
-map("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation" })
 map("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
 map("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
 
@@ -48,21 +41,11 @@ map("n", "<leader>dw", function()
 end, { desc = "Workspace diagnostics" })
 map("n", "<leader>dd", vim.diagnostic.open_float, { desc = "Diagnostic details" })
 
--- Code / LSP
-map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
-map("n", "<leader>cr", vim.lsp.buf.rename, { desc = "Rename symbol" })
-map("n", "<leader>cR", function()
-	MiniExtra.pickers.lsp({ scope = "references" })
-end, { desc = "References" })
-map("n", "<leader>cs", function()
-	MiniExtra.pickers.lsp({ scope = "document_symbol" })
-end, { desc = "Document symbols" })
-map("n", "<leader>cS", function()
-	MiniExtra.pickers.lsp({ scope = "workspace_symbol" })
+-- Use Neovim's native K and gr* LSP mappings for code actions and navigation.
+-- `grw` keeps workspace symbols within the LSP mapping family.
+map("n", "grw", function()
+	MiniExtra.pickers.lsp({ scope = "workspace_symbol_live" })
 end, { desc = "Workspace symbols" })
-map("n", "<leader>ci", function()
-	MiniExtra.pickers.lsp({ scope = "implementation" })
-end, { desc = "Implementations" })
 
 -- Git
 -- Some sensible stuff stolen from MiniMax configuration (https://nvim-mini.org/MiniMax/configs/)
@@ -201,17 +184,37 @@ end, { desc = "Help" })
 local ok, wk = pcall(require, "which-key")
 
 if ok then
-	wk.setup({ delay = 300 })
+	wk.setup({
+		delay = 300,
+		triggers = {
+			{ "<auto>", mode = "nixsotc" },
+			{ "gr", mode = { "n", "v" } },
+		},
+	})
+
+	-- Which-key trims ordinary trailing spaces from its icon column, so use a
+	-- non-breaking space to keep a clear gap before these LSP descriptions.
+	local icon_gap = string.char(194, 160)
+	-- Use fuller Material Design glyphs so the icons read clearly at terminal size.
+	local code_icon = { icon = "󰅴" .. icon_gap, color = "orange" }
+	local search_icon = { icon = "󰍉" .. icon_gap, color = "green" }
 
 	wk.add({
 		{ "<leader>b", group = "[B]uffers" },
-		{ "<leader>c", group = "[C]ode" },
 		{ "<leader>d", group = "[D]iagnostics" },
 		{ "<leader>f", group = "[F]iles / Find" },
 		{ "<leader>g", group = "[G]it" },
 		{ "<leader>t", group = "[T]ests" },
 		{ "<leader>T", group = "[T]oggle common options" },
-	})
+		{ "gr", group = "[L]SP" },
+		-- These are Which-key labels only; Neovim's built-in LSP mappings stay intact.
+		{ "gra", desc = "Code action", icon = code_icon, mode = { "n", "v" } },
+		{ "gri", desc = "Go to implementation" },
+		{ "grn", desc = "Rename symbol" },
+		{ "grr", desc = "Find references", icon = search_icon },
+		{ "grt", desc = "Go to type definition" },
+		{ "grx", desc = "Run CodeLens action", icon = code_icon },
+	}, { create = false })
 end
 
 -- Use mini.basics for sensible mappings
@@ -223,3 +226,8 @@ require("mini.basics").setup({
 		move_with_alt = true,
 	},
 })
+
+-- mini.basics replaces these Neovim 0.12 LSP mappings with its own defaults.
+-- Restore document symbols and Insert-mode signature help; keep its other maps.
+map("n", "gO", vim.lsp.buf.document_symbol, { desc = "LSP: Document symbols" })
+map("i", "<C-S>", vim.lsp.buf.signature_help, { desc = "LSP: Signature help" })
