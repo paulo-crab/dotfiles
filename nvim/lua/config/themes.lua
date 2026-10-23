@@ -2,7 +2,11 @@ require("catppuccin").setup({
 	flavour = "catppuccin-macchiato",
 })
 
-local dark_theme = "catppuccin-macchiato"
+vim.pack.add({
+	"https://github.com/freddiehaddad/haishoku.nvim",
+})
+
+local dark_theme = "haishoku"
 local light_theme = "gruvbox"
 
 local function update_colorscheme()
