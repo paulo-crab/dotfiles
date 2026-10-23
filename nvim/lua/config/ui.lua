@@ -23,10 +23,6 @@ local function apply_highlights()
 	end
 	vim.api.nvim_set_hl(0, "TermCursor", { link = "Cursor" })
 
-	-- Use the theme's selected-menu treatment for the active buffer tab.
-	-- Modified tabs retain their theme-provided warning/modified styling.
-	vim.api.nvim_set_hl(0, "MiniTablineCurrent", { link = "PmenuSel" })
-
 	-- Keep the current search match visible without adding another accent color.
 	vim.api.nvim_set_hl(0, "CurSearch", { link = "IncSearch" })
 
@@ -100,33 +96,6 @@ local function setup_statusline()
 	})
 end
 
-local function setup_tabline()
-	require("mini.tabline").setup({ show_icons = true, tabpage_section = "right" })
-
-	local function refresh_tabline()
-		local file_buffers = 0
-		for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-			if vim.bo[buf].buflisted and vim.bo[buf].buftype == "" then
-				file_buffers = file_buffers + 1
-				if file_buffers > 1 then
-					break
-				end
-			end
-		end
-
-		vim.o.showtabline = (file_buffers > 1 or #vim.api.nvim_list_tabpages() > 1) and 2 or 0
-	end
-
-	local group = vim.api.nvim_create_augroup("ConfigUiTabline", { clear = true })
-	vim.api.nvim_create_autocmd({ "BufAdd", "BufDelete", "BufEnter", "TabEnter", "TabClosed" }, {
-		group = group,
-		callback = function()
-			vim.schedule(refresh_tabline)
-		end,
-	})
-	refresh_tabline()
-end
-
 function M.setup()
 	-- Keep Insert mode's bar shape, with a little more width and no blinking.
 	vim.opt.guicursor = table.concat({
@@ -141,9 +110,8 @@ function M.setup()
 	vim.o.pumborder = "rounded"
 	vim.opt.fillchars:append({ vert = "│" })
 
-	require("mini.notify").setup({ window = { winblend = 0 } })
+	--		require("mini.notify").setup({ window = { winblend = 0 } })
 	setup_statusline()
-	setup_tabline()
 
 	local group = vim.api.nvim_create_augroup("ConfigUiHighlights", { clear = true })
 	vim.api.nvim_create_autocmd("ColorScheme", {
@@ -156,6 +124,25 @@ function M.setup()
 		end,
 	})
 	apply_highlights()
+
+	require("noice").setup({
+		lsp = {
+			-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+			override = {
+				["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+				["vim.lsp.util.stylize_markdown"] = true,
+				["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+			},
+		},
+		-- you can enable a preset for easier configuration
+		presets = {
+			bottom_search = true, -- use a classic bottom cmdline for search
+			command_palette = true, -- position the cmdline and popupmenu together
+			long_message_to_split = true, -- long messages will be sent to a split
+			inc_rename = false, -- enables an input dialog for inc-rename.nvim
+			lsp_doc_border = false, -- add a border to hover docs and signature help
+		},
+	})
 end
 
 return M
