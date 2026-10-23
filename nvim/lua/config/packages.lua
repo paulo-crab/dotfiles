@@ -10,10 +10,14 @@ PackAdd("stevearc/conform.nvim", "stable")
 PackAdd("saghen/blink.cmp", "v1")
 PackAdd("nvim-treesitter/nvim-treesitter")
 
+-- PackAdd("GustavEikaas/easy-dotnet.nvim")
+
 -- UI
 PackAdd("catppuccin/nvim")
 PackAdd("ellisonleao/gruvbox.nvim")
 PackAdd("folke/which-key.nvim")
+PackAdd("MunifTanjim/nui.nvim")
+PackAdd("folke/noice.nvim")
 
 ---- For FFF
 vim.api.nvim_create_autocmd("PackChanged", {
