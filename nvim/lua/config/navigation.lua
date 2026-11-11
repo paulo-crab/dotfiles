@@ -46,9 +46,33 @@ require("nvim-tree").setup({
 local MiniPick = require("mini.pick")
 
 MiniPick.setup({
+	window = {
+		config = function()
+			local height = math.floor(0.618 * vim.o.lines)
+			local width = math.floor(0.618 * vim.o.columns)
+
+			return {
+				anchor = "NW",
+				height = height,
+				width = width,
+				row = math.floor(0.5 * (vim.o.lines - height)),
+				col = math.floor(0.5 * (vim.o.columns - width)),
+			}
+		end,
+	},
 	mappings = {
+		caret_right = "",
 		move_down = "<M-j>",
 		move_up = "<M-k>",
+		toggle_preview = "<Right>",
+		-- MiniPick has one built-in key for this action; make Tab feed the same key.
+		toggle_preview_tab = {
+			char = "<Tab>",
+			func = function()
+				local right = vim.api.nvim_replace_termcodes("<Right>", true, true, true)
+				vim.api.nvim_feedkeys(right, "n", false)
+			end,
+		},
 		-- Built-in mapping fields hold a single key, so `choose` keeps its default
 		-- `<CR>` and `<M-l>` is added as a custom action doing the same thing.
 		choose_alt = {
