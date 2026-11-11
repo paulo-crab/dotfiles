@@ -217,6 +217,7 @@ if ok then
 		{ "gr", group = "[L]SP" },
 		-- These are Which-key labels only; Neovim's built-in LSP mappings stay intact.
 		{ "gra", desc = "Code action", icon = code_icon, mode = { "n", "v" } },
+		{ "grc", desc = "Create type from usage", icon = code_icon },
 		{ "gri", desc = "Go to implementation" },
 		{ "grn", desc = "Rename symbol" },
 		{ "grr", desc = "Find references", icon = search_icon },
@@ -239,3 +240,17 @@ require("mini.basics").setup({
 -- Restore document symbols and Insert-mode signature help; keep its other maps.
 map("n", "gO", vim.lsp.buf.document_symbol, { desc = "LSP: Document symbols" })
 map("i", "<C-S>", vim.lsp.buf.signature_help, { desc = "LSP: Signature help" })
+
+-- Run EasyDotnet's create-type action directly; `gra` remains the general picker.
+map("n", "grc", function()
+	vim.lsp.buf.code_action({
+		apply = true,
+		filter = function(action)
+			local command = action.command
+			if type(command) == "table" then
+				command = command.command
+			end
+			return command == "easy-dotnet.roslyn.createTypeFromUsage"
+		end,
+	})
+end, { desc = "Create type from usage" })

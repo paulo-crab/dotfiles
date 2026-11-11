@@ -10,7 +10,7 @@ PackAdd("stevearc/conform.nvim", "stable")
 PackAdd("saghen/blink.cmp", "v1")
 PackAdd("nvim-treesitter/nvim-treesitter")
 
--- PackAdd("GustavEikaas/easy-dotnet.nvim")
+PackAdd("GustavEikaas/easy-dotnet.nvim")
 
 -- UI
 PackAdd("catppuccin/nvim")
