@@ -1,5 +1,6 @@
 require("nvim-treesitter").install({
 	"c_sharp",
+	"lua",
 	"markdown",
 	"markdown_inline",
 })
