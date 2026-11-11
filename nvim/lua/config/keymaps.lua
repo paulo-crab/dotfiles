@@ -42,6 +42,11 @@ end, { desc = "Workspace diagnostics" })
 map("n", "<leader>dd", vim.diagnostic.open_float, { desc = "Diagnostic details" })
 
 -- Use Neovim's native K and gr* LSP mappings for code actions and navigation.
+-- Use MiniExtra pickers where a navigable result list is more useful.
+map("n", "grr", function()
+	MiniExtra.pickers.lsp({ scope = "references" })
+end, { desc = "Find references" })
+
 -- `grw` keeps workspace symbols within the LSP mapping family.
 map("n", "grw", function()
 	MiniExtra.pickers.lsp({ scope = "workspace_symbol_live" })
