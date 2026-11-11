@@ -149,6 +149,9 @@ local function nvimtree_toggle()
 	end
 end
 map("n", "<leader>fe", nvimtree_toggle, { desc = "Toggle file explorer" })
+map("n", "<leader>fr", function()
+	NvimTree.tree.find_file({ open = true, focus = true, update_root = true })
+end, { desc = "Reveal current file in tree" })
 map("n", "<leader>fm", function()
 	MiniFiles.open()
 end, { desc = "Toggle mini.files" })
