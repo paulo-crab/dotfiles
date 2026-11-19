@@ -5,3 +5,5 @@ zsh/.zprofile
 zsh/.zsh_history
 zsh/.secrets*
 
+/nvim/nvim.log
+/nvim/output/pdf/nvim-shortcuts-cheat-sheet.pdf
