@@ -2,6 +2,7 @@ require("config.utils")
 
 PackAdd("nvim-mini/mini.nvim")
 PackAdd("mason-org/mason.nvim")
+PackAdd("CoreyKaylor/diffbandit.nvim")
 
 PackAdd("dmtrKovalenko/fff")
 PackAdd("nvim-tree/nvim-tree.lua")

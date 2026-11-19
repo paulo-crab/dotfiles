@@ -3,6 +3,7 @@ require("config.options")
 require("config.mini")
 
 require("config.navigation")
+require("config.diffbandit")
 require("config.keymaps")
 require("config.autocmds")
 require("config.formatting")

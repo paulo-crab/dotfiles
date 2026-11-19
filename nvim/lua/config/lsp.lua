@@ -23,7 +23,12 @@ require("easy-dotnet").setup({
 		razor = { enabled = false },
 	},
 	debugger = { auto_register_dap = false },
-	test_runner = { auto_start_testrunner = false },
+	test_runner = {
+		auto_start_testrunner = false,
+		mappings = {
+			run_all_tests_from_buffer = { lhs = "<leader>tt" },
+		},
+	},
 })
 
 vim.diagnostic.config({ virtual_text = true })
