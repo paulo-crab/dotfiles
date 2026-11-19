@@ -45,6 +45,19 @@ require("nvim-tree").setup({
 
 local MiniPick = require("mini.pick")
 
+local function toggle_preview_view()
+	local right = vim.api.nvim_replace_termcodes("<Right>", true, true, true)
+	vim.api.nvim_feedkeys(right, "n", false)
+end
+
+local function is_preview_view()
+	local state = MiniPick.get_picker_state()
+	if state == nil or state.buffers.preview == nil then
+		return false
+	end
+	return vim.api.nvim_win_get_buf(state.windows.main) == state.buffers.preview
+end
+
 MiniPick.setup({
 	window = {
 		config = function()
@@ -68,23 +81,22 @@ MiniPick.setup({
 		-- MiniPick has one built-in key for this action; make Tab feed the same key.
 		toggle_preview_tab = {
 			char = "<Tab>",
-			func = function()
-				local right = vim.api.nvim_replace_termcodes("<Right>", true, true, true)
-				vim.api.nvim_feedkeys(right, "n", false)
-			end,
+			func = toggle_preview_view,
 		},
-		-- Built-in mapping fields hold a single key, so `choose` keeps its default
-		-- `<CR>` and `<M-l>` is added as a custom action doing the same thing.
-		choose_alt = {
+		show_preview = {
 			char = "<M-l>",
 			func = function()
-				local item = MiniPick.get_picker_matches().current
-				if item == nil then
-					return true
+				if not is_preview_view() then
+					toggle_preview_view()
 				end
-				local ok, res = pcall(MiniPick.get_picker_opts().source.choose, item)
-				-- Stop the picker unless `choose` asked to keep it open.
-				return not (ok and res)
+			end,
+		},
+		show_results = {
+			char = "<M-h>",
+			func = function()
+				if is_preview_view() then
+					toggle_preview_view()
+				end
 			end,
 		},
 	},
