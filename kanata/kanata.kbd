@@ -1,15 +1,16 @@
 ;; Practice mode: press physical Control+Alt+GUI+V to toggle.
-;; Original modifiers, editing keys, Escape, arrows, Home/End, Page Up/Down
-;; are silent while active; use home-row modifiers and Caps/Space navigation.
-;; Tap Space for a space; hold 220 ms for navigation. Caps remains available.
-;; Caps: ,=Delete, B/W=word, 0/4/$=line, U/D=page, G/T=document, [=Escape, M=Backspace, X=Ctrl+D.
+;; Original modifiers, editing keys, Escape, arrows, digits, Home/End, Page Up/Down
+;; are silent while active; use home-row modifiers and Caps navigation; held Space types numbers.
+;; Tap Space for a space; hold 220 ms for numbers/symbols. Hold Caps for navigation.
+;; Caps: V/,=Delete, B/M=Backspace, N=Return, W=next word, 0/4/$=line, U/D=page, G/T=document, [=Escape, X=Ctrl+D.
 ;; Kanata starter for macOS + US/UK QWERTY key positions.
 ;; CAGS: A/S/D/F -> Control/Option/Command/Shift when held.
 ;; Mirrored: J/K/L/; -> Shift/Command/Option/Control when held.
 ;; Tap the keys normally to type their usual characters.
 ;; The ; key is the physical key immediately to the right of L.
 ;; Use the U.S. macOS input source for the Swedish character shortcuts.
-;; Hold either Option for [=å, ;=ö, '=ä; add Shift for capitals. No toggle.
+;; Hold either Option for Swedish positions: [=å, ;=ö, '=ä,
+;; ]=¨/^, backslash='/asterisk, equals=´/grave; both Options+]=dead tilde.
 ;; Tap Caps Lock for Escape; hold for H/J/K/L arrows, Space=Backspace, N=Return.
 ;; Tap Tab normally; hold bare Tab 250 ms for Homerow (Shift+Command+Space).
 ;; Right Command + H/J/K/L also navigates. Other Right Command shortcuts work.
@@ -29,12 +30,15 @@
   lalt lmet ralt rmet
  spc n tab
   , b w 0 4 u t m x
-  v lctl rctl lsft rsft bspc del ret esc left rght up down home end pgup pgdn)
+  v lctl rctl lsft rsft bspc del ret esc left rght up down home end pgup pgdn
+  1 2 3 5 6 7 8 9
+  ] bksl =
+  f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12)
 
 (defvar
   tap-time 200
-  hold-time 180
-  typing-idle 150
+  hold-time 200
+  typing-idle 0
 
   ;; While deciding tap vs hold, another key from the same hand means "type".
   ;; For a shortcut, use the modifier on the opposite hand from the next key.
@@ -50,7 +54,8 @@
 
 (defalias
   ;; These wait for the hold timeout, rather than turning typing rolls into
-  ;; shortcuts. Recent typing also forces a normal letter via typing-idle.
+  ;; shortcuts. Prior-idle is disabled so a deliberate hold still works
+  ;; immediately after another keystroke.
   a (tap-hold-tap-keys $tap-time $hold-time a lctl $left-hand-keys
        (require-prior-idle $typing-idle))
   s (tap-hold-tap-keys $tap-time $hold-time s lalt $left-hand-keys
@@ -91,6 +96,24 @@
                    ((or lalt ralt)) @se-ae break
                    () ' break)
 
+  ;; Missing Swedish symbol positions on an ANSI U.S. keyboard. Option
+  ;; selects the Swedish key; Shift selects its upper legend. Accent keys
+  ;; retain macOS dead-key composition with the following letter.
+  se-diaeresis (fork (unmod lalt u) (unmod lalt i) (lsft rsft))
+  se-tilde (unmod lalt n)
+  se-quote-star (fork (unmod ') (unmod lsft 8) (lsft rsft))
+  se-acute-grave (fork (unmod lalt e) (unmod lalt grv) (lsft rsft))
+  se-bracket-right (switch ((or lctl rctl lmet rmet)) ] break
+                           ((and lalt ralt)) @se-tilde break
+                           ((or lalt ralt)) @se-diaeresis break
+                           () ] break)
+  se-backslash (switch ((or lctl rctl lmet rmet)) bksl break
+                       ((or lalt ralt)) @se-quote-star break
+                       () bksl break)
+  se-equals (switch ((or lctl rctl lmet rmet)) = break
+                    ((or lalt ralt)) @se-acute-grave break
+                    () = break)
+
   ;; Three physical modifiers + V toggle practice mode, even when their
   ;; output is suppressed. On the Microsoft keyboard, Alt and Windows still
   ;; count by their physical positions, regardless of the normal swap.
@@ -126,26 +149,27 @@
                        ((or lalt ralt)) @semi-oe break
                        () @semi break)
 
-  ;; These additions require Caps or activated Space navigation, preserving Right Command shortcuts.
+  ;; These additions require Caps navigation, preserving Right Command shortcuts.
   ;; Motions retain Shift for selection; 4/$ consumes Shift for plain line end.
-  nav-delete (switch ((or (input real caps) nop0)) (unmod del) break () , break)
-  nav-word-left (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) lalt left) break () b break)
-  nav-word-right (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) lalt rght) break () w break)
-  nav-line-start (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) lmet left) break () 0 break)
-  nav-line-end (switch ((or (input real caps) nop0)) (unmod lmet rght) break () 4 break)
-  nav-page-up (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) pgup) break () u break)
-  nav-page-down (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) pgdn) break () d break)
-  nav-doc-end (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) lmet down) break () g break)
-  nav-doc-start (switch ((or (input real caps) nop0)) (unmod (lctl rctl lalt ralt lmet rmet) lmet up) break () t break)
-  nav-escape (switch ((or (input real caps) nop0)) (unmod esc) break () @se-ring break)
-  nav-backspace (switch ((or (input real caps) nop0)) (unmod bspc) break () m break)
-  nav-control-d (switch ((or (input real caps) nop0)) (unmod lctl d) break () x break)
+  nav-delete (switch ((input real caps)) (unmod del) break () , break)
+  nav-delete-v (switch ((input real caps)) (unmod del) break () @practice-on break)
+  nav-backspace-b (switch ((input real caps)) (unmod bspc) break () b break)
+  nav-word-right (switch ((input real caps)) (unmod (lctl rctl lalt ralt lmet rmet) lalt rght) break () w break)
+  nav-line-start (switch ((input real caps)) (unmod (lctl rctl lalt ralt lmet rmet) lmet left) break () 0 break)
+  nav-line-end (switch ((input real caps)) (unmod lmet rght) break () 4 break)
+  nav-page-up (switch ((input real caps)) (unmod (lctl rctl lalt ralt lmet rmet) pgup) break () u break)
+  nav-page-down (switch ((input real caps)) (unmod (lctl rctl lalt ralt lmet rmet) pgdn) break () d break)
+  nav-doc-end (switch ((input real caps)) (unmod (lctl rctl lalt ralt lmet rmet) lmet down) break () g break)
+  nav-doc-start (switch ((input real caps)) (unmod (lctl rctl lalt ralt lmet rmet) lmet up) break () t break)
+  nav-escape (switch ((input real caps)) (unmod esc) break () @se-ring break)
+  nav-backspace (switch ((input real caps)) (unmod bspc) break () m break)
+  nav-control-d (switch ((input real caps)) (unmod lctl d) break () x break)
 
   ;; Caps+Space is plain Backspace; Right Command+Space stays Command+Space.
   nav-space (switch ((input real caps)) (unmod bspc) break
                     () spc break)
-  ;; Caps+N or held-Space+N sends Return; Right Command+N keeps its shortcut.
-  nav-enter (switch ((or (input real caps) nop0)) (unmod ret) break
+  ;; Caps+N sends Return; Right Command+N keeps its shortcut.
+  nav-enter (switch ((input real caps)) (unmod ret) break
                     () n break)
   ;; Bare Tab: tap for Tab; hold 250 ms to activate the Homerow app once.
   ;; With any modifier already held, retain the ordinary Tab shortcut.
@@ -155,16 +179,16 @@
     () (tap-hold 200 250 tab @homerow) break)
 
   nav (layer-while-held nav)
-  ;; Space: tap normally; hold 220 ms for the same full navigation as Caps.
-  ;; The internal marker distinguishes Space holds from Right Command nav.
-  space-nav (multi nop0 @nav)
+  ;; Space: tap normally; hold 220 ms for the number/symbol layer.
+  ;; Caps and Right Command still provide navigation.
+  space-numsym (layer-while-held numbers-symbols)
   ;; Preserve modifier+Space shortcuts when the modifier was held first.
   space (switch
     ((or lctl rctl lalt ralt lmet rmet lsft rsft)) spc break
-    () (tap-hold 200 220 spc @space-nav) break)
+    () (tap-hold 200 220 spc @space-numsym) break)
 
   ;; Caps activates navigation immediately when the next key is pressed.
-  ;; It has no typing-idle rule, so navigation works straight after typing.
+  ;; Navigation works straight after typing too.
   caps (tap-hold-press 200 200 esc @nav)
 
   ;; Keep Right Command available for its other shortcuts, while adding nav.
@@ -176,6 +200,21 @@
   left-win  (switch ((device-history 1 1)) lalt break () lmet break)
   right-alt (switch ((device-history 1 1)) @rnav break () ralt break)
   right-win (switch ((device-history 1 1)) ralt break () @rnav break)
+
+  ;; Restore the MacBook's printed top-row actions. Keep the Microsoft
+  ;; keyboard's F keys, and pass through Fn+F keys when Fn is visible.
+  mac-f1  (switch ((or (device-history 1 1) (input real fn))) f1  break () brdn break)
+  mac-f2  (switch ((or (device-history 1 1) (input real fn))) f2  break () brup break)
+  mac-f3  (switch ((or (device-history 1 1) (input real fn))) f3  break () mctl break)
+  mac-f4  (switch ((or (device-history 1 1) (input real fn))) f4  break () sls  break)
+  mac-f5  (switch ((or (device-history 1 1) (input real fn))) f5  break () dtn  break)
+  mac-f6  (switch ((or (device-history 1 1) (input real fn))) f6  break () dnd  break)
+  mac-f7  (switch ((or (device-history 1 1) (input real fn))) f7  break () prev break)
+  mac-f8  (switch ((or (device-history 1 1) (input real fn))) f8  break () pp   break)
+  mac-f9  (switch ((or (device-history 1 1) (input real fn))) f9  break () next break)
+  mac-f10 (switch ((or (device-history 1 1) (input real fn))) f10 break () mute break)
+  mac-f11 (switch ((or (device-history 1 1) (input real fn))) f11 break () vold break)
+  mac-f12 (switch ((or (device-history 1 1) (input real fn))) f12 break () volu break)
 
   ;; Remove Right Command from arrows; retain Shift/Option/Control selection.
   left  (unmod (rmet) left)
@@ -189,6 +228,9 @@
   @left-alt @left-win @right-alt @right-win @space n @homerow-tab
   , b w 0 4 u t m x
   @practice-on lctl rctl lsft rsft bspc del ret esc left rght up down home end pgup pgdn
+  1 2 3 5 6 7 8 9
+  @se-bracket-right @se-backslash @se-equals
+  @mac-f1 @mac-f2 @mac-f3 @mac-f4 @mac-f5 @mac-f6 @mac-f7 @mac-f8 @mac-f9 @mac-f10 @mac-f11 @mac-f12
 )
 
 ;; Home-row letters become plain letters in nav; J is immediately Down.
@@ -196,37 +238,45 @@
 (deflayer nav
   _ a s @nav-page-down f @nav-doc-end @left @down @up @right @se-dia-o @nav-escape _ @reload-r
   _ _ _ _ @nav-space @nav-enter _
-  @nav-delete @nav-word-left @nav-word-right @nav-line-start @nav-line-end @nav-page-up @nav-doc-start @nav-backspace @nav-control-d
-  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+  @nav-delete @nav-backspace-b @nav-word-right @nav-line-start @nav-line-end @nav-page-up @nav-doc-start @nav-backspace @nav-control-d
+  @nav-delete-v _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+  _ _ _ _ _ _ _ _
+  _ _ _
+  _ _ _ _ _ _ _ _ _ _ _ _
 )
 
-;; Practice mode preserves home-row modifiers and Caps/Space navigation.
-;; The original physical modifiers, editing keys, and movement keys are silent.
+;; Practice mode preserves home-row modifiers, Caps navigation, and Space numbers.
+;; Original physical modifiers, editing/movement keys, and digits 1-0 are silent.
 ;; Physical Control+Alt+GUI+V still switches back to base.
 (deflayer practice
   @caps @a @s @d @f g h @j @k @l @semi-option @se-ring @se-dia-a @reload-r
   XX XX XX XX @space n @homerow-tab
-  , b w 0 4 u t m x
+  , b w XX XX u t m x
   @practice-off XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX
+  XX XX XX XX XX XX XX XX
+  @se-bracket-right @se-backslash @se-equals
+  @mac-f1 @mac-f2 @mac-f3 @mac-f4 @mac-f5 @mac-f6 @mac-f7 @mac-f8 @mac-f9 @mac-f10 @mac-f11 @mac-f12
 )
 
-;; Number/symbol layer, defined but deliberately not bound to a key yet.
+;; Number/symbol layer, active while bare Space is held for 220 ms.
 ;; Home row A through ; gives 1 through 0, with apostrophe giving -.
-;; Top row Q through ] gives the shifted US number-row symbols.
-;; Caps, Space, Tab, and the physical modifier swap keep their roles.
+;; Symbol row shifted left: Space+Tab through Space+[ gives ! through =.
+;; Bare Tab and the physical modifier swap keep their roles.
+;; Bottom row C/V = braces, B = equals, N/M = square brackets.
+;; Editing stays on Caps; the physical three-modifier+V practice toggle remains.
 (deflayermap (numbers-symbols)
   caps @caps
   spc @space
-  tab @homerow-tab
+  tab S-1
   lalt @left-alt
   lmet @left-win
   ralt @right-alt
   rmet @right-win
-  v @practice-on
+  c S-[    v S-]    b =    n [    m ]
 
   a 1    s 2    d 3    f 4    g 5
   h 6    j 7    k 8    l 9    ; 0    ' -
 
-  q S-1  w S-2  e S-3  r S-4  t S-5  y S-6
-  u S-7  i S-8  o S-9  p S-0  [ S--  ] S-=
+  q S-2  w S-3  e S-4  r S-5  t S-6  y S-7
+  u S-8  i S-9  o S-0  p -  [ =
 )
