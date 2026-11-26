@@ -1,6 +1,7 @@
 require("config.packages")
 require("config.options")
 require("config.mini")
+require("config.focus")
 
 require("config.navigation")
 require("config.diffbandit")

@@ -401,6 +401,7 @@ if ok then
 		{ "<leader>f", group = "[F]iles / Find" },
 		{ "<leader>g", group = "[G]it" },
 		{ "<leader>t", group = "[T]oggles / tests" },
+		{ "<leader>tz", desc = "Toggle focus mode" },
 		{ "<leader>y", group = "[Y]ank / Share" },
 		{ "<leader>yf", desc = "Copy file:line reference", mode = { "n" } },
 		{ "<leader>yf", desc = "Copy file:line range reference", mode = { "x" } },
@@ -427,6 +428,10 @@ require("mini.basics").setup({
 		move_with_alt = true,
 	},
 })
+
+map("n", "<leader>tz", function()
+	require("config.focus").toggle()
+end, { desc = "Toggle focus mode" })
 
 -- mini.basics replaces these Neovim 0.12 LSP mappings with its own defaults.
 -- Restore document symbols and Insert-mode signature help; keep its other maps.
