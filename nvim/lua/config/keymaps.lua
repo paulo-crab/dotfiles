@@ -407,6 +407,7 @@ if ok then
 		{ "<leader>yf", desc = "Copy file:line range reference", mode = { "x" } },
 		{ "<leader>yg", desc = "Copy GitHub permalink for current line", mode = { "n" } },
 		{ "<leader>yg", desc = "Copy GitHub permalink for selected lines", mode = { "x" } },
+		{ "gO", desc = "Document symbols (current file)" },
 		{ "gr", group = "[L]SP" },
 		-- These are Which-key labels only; Neovim's built-in LSP mappings stay intact.
 		{ "gra", desc = "Code action", icon = code_icon, mode = { "n", "v" } },
@@ -434,8 +435,10 @@ map("n", "<leader>tz", function()
 end, { desc = "Toggle focus mode" })
 
 -- mini.basics replaces these Neovim 0.12 LSP mappings with its own defaults.
--- Restore document symbols and Insert-mode signature help; keep its other maps.
-map("n", "gO", vim.lsp.buf.document_symbol, { desc = "LSP: Document symbols" })
+-- Use a MiniPick for document symbols and restore Insert-mode signature help.
+map("n", "gO", function()
+	MiniExtra.pickers.lsp({ scope = "document_symbol" })
+end, { desc = "Document symbols (current file)" })
 map("i", "<C-S>", vim.lsp.buf.signature_help, { desc = "LSP: Signature help" })
 
 -- Run EasyDotnet's create-type action directly; `gra` remains the general picker.
