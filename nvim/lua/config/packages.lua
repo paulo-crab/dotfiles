@@ -16,6 +16,7 @@ PackAdd("GustavEikaas/easy-dotnet.nvim")
 -- UI
 PackAdd("catppuccin/nvim")
 PackAdd("ellisonleao/gruvbox.nvim")
+PackAdd("rebelot/kanagawa.nvim")
 PackAdd("folke/twilight.nvim")
 PackAdd("folke/which-key.nvim")
 PackAdd("MunifTanjim/nui.nvim")

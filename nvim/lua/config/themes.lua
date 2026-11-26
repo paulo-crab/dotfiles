@@ -1,12 +1,22 @@
 require("catppuccin").setup({
 	flavour = "catppuccin-macchiato",
 })
+require("kanagawa").setup({
+	theme = "dragon",
+	colors = {
+		theme = {
+			all = {
+				ui = { bg_gutter = "none" },
+			},
+		},
+	},
+})
 
 vim.pack.add({
 	"https://github.com/freddiehaddad/haishoku.nvim",
 })
 
-local dark_theme = "haishoku"
+local dark_theme = "kanagawa"
 local light_theme = "gruvbox"
 
 local function update_colorscheme()
