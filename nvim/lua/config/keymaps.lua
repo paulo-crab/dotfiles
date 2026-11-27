@@ -376,6 +376,11 @@ map("n", "<leader>h", function()
 	MiniPick.builtin.help()
 end, { desc = "Help" })
 
+-- UI
+map("n", "<leader>uc", function()
+	MiniExtra.pickers.colorschemes()
+end, { desc = "Choose colorscheme" })
+
 -- Which-key
 local ok, wk = pcall(require, "which-key")
 
@@ -402,6 +407,8 @@ if ok then
 		{ "<leader>g", group = "[G]it" },
 		{ "<leader>t", group = "[T]oggles / tests" },
 		{ "<leader>tz", desc = "Toggle focus mode" },
+		{ "<leader>u", group = "[U]I" },
+		{ "<leader>uc", desc = "Choose colorscheme" },
 		{ "<leader>y", group = "[Y]ank / Share" },
 		{ "<leader>yf", desc = "Copy file:line reference", mode = { "n" } },
 		{ "<leader>yf", desc = "Copy file:line range reference", mode = { "x" } },
