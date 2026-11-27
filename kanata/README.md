@@ -22,8 +22,9 @@ Left to right, the home row is **C A G S · · S G A C**. G and H are ordinary
 letters. CAGS means Control, Alt/Option, GUI/Command, Shift; see the
 [CAGS explanation](https://precondition.github.io/home-row-mods#cags).
 
-Use **Caps+V** for Forward Delete, **Caps+B** for Backspace, and **Caps+N**
-for Return. Option+N and Option+V retain their normal macOS behavior, so
+Use **Caps+;** for Forward Delete, **Caps+M** for Backspace, and **Caps+Space**
+for Return. Caps+V/B/N retain the earlier versions of those actions.
+Option+N and Option+V retain their normal macOS behavior, so
 holding Option to type Swedish cannot trigger these editing keys.
 
 ## Violento practice mode
@@ -46,8 +47,10 @@ letters remain available through the home-row S or L Option hold.
 
 To check the mode, type a lowercase letter while holding physical Shift: it
 should stay lowercase. Hold F or J instead to type a capital. Tapping physical
-Backspace should do nothing; Caps+M or Caps+Space should delete a character.
-The physical 1–0 keys should do nothing; hold Space and tap A through ; for 1–0.
+Backspace should do nothing; Caps+M or Caps+B should delete a character.
+Caps+Space should insert Return.
+The physical 1–0 keys should do nothing; hold Space and use the left-hand
+WER/SDF/XCV/B numpad for 0–9.
 The mode starts off whenever Kanata starts. A full service restart returns to
 normal if you cannot use the toggle.
 
@@ -62,34 +65,51 @@ Shift + navigation selects text.
 Tap **Space** normally for a space. Hold it for about **220 ms** for the
 `numbers-symbols` layer. The held Space does not insert a space.
 
-| Physical row | Output, left to right |
-| --- | --- |
-| `A S D F G H J K L ;` | `1 2 3 4 5 6 7 8 9 0` |
-| `'` | `-` |
-| `Tab Q W E R T Y U I O P [` | `! @ # $ % ^ & * ( ) - =` |
-| `C V` | `{ }` |
-| `B` | `=` |
-| `N M` | `[ ]` |
+The left hand has a numpad, with the surrounding symbols following the
+Miryoku Num-layer idea. The right-hand **J/K/L/;** keys retain
+**Shift/Command/Option/Control** while Space is held. This fits a right-thumb
+Space hold and adapts Miryoku's grid to staggered QWERTY keys:
 
-The symbol row is shifted one physical key left, so **Space+Y gives `&`**.
-Space+Tab gives `!`; Tab on its own still types Tab or activates Homerow
-when held. Space+`]` types a normal `]`.
-Other lower-row keys type normally. The physical Control+Alt+Command+V
-shortcut still toggles Violento when Space is not held.
-Caps remains the navigation key, with Escape on tap.
-While Space is held, the mapped home-row keys type numbers instead of CAGS
-modifiers, and the mapped Swedish positions type their number/symbol output.
-The symbol row assumes the macOS **U.S.** input source.
+```text
+Physical keys     Q W E R T
+Space held        [ 7 8 9 ]
+Space + Shift     { & * ( }
+
+Physical keys     A S D F G
+Space held        ; 4 5 6 =
+Space + Shift     : $ % ^ +
+
+Physical keys     Z X C V B
+Space held        ` 1 2 3 0
+Space + Shift     ~ ! @ # )
+
+Physical keys     Tab  key left of 1  1
+Space held         .         -        \
+Space + Shift      >         _        |
+```
+
+Because Space is the layer key rather than a spare thumb key, **0** is on B.
+The decimal point is on Tab, minus on the key left of 1, and backslash on
+physical 1 while Space is held. On an ISO MacBook, the key left of 1 is `§`;
+the separate grave key near Z also sends minus in this layer. On an ANSI
+keyboard, the grave key left of 1 sends minus. For shifted symbols, **hold Space first**,
+then hold **J** for Shift for about 200 ms, then tap a left-hand key. For
+example, **Space+J+X** types `!`, **Space+J+Q** types `{`, and **Space+J+G**
+types `+`. Physical Shift also works if pressed after Space; in Violento mode,
+use J because physical Shift is disabled. The layer assumes the macOS **U.S.**
+input source. Tab keeps its normal tap/Homerow hold behavior when Space is not
+held. The physical Control+Alt+Command+V shortcut still toggles Violento when
+Space is not held. Caps remains the navigation key, with Escape on tap.
 
 If a modifier is held *before* Space, Space keeps its normal shortcut,
 including Command+Space, Control+Space, Option+Space, and Shift+Space.
 To repeat spaces, quickly tap Space, then press and hold it again within
 200 ms.
 
-**Caps Lock + Space sends Backspace** on both keyboards. Tap Space to
-delete one character or keep it held to repeat. Release Caps Lock to type
-spaces normally. This sends plain Backspace even with other modifiers held;
-Right Command + Space keeps its usual Command+Space shortcut.
+**Caps Lock + Space sends Return** on both keyboards. Hold Caps first, then
+tap Space. Release Caps Lock to type spaces normally. Holding a modifier with
+Caps+Space sends the modified Return, such as Shift+Return. Right Command +
+Space keeps its usual Command+Space shortcut.
 
 **Caps Lock + N sends Return** on both keyboards. Hold Caps Lock, tap N,
 then release it to continue typing. This sends plain Return even with other
@@ -100,25 +120,42 @@ Command + N retain their usual shortcuts.
 
 Hold Caps Lock and press these keys on either keyboard:
 
+| Left home key with Caps held | Modifier |
+| --- | --- |
+| A | Control |
+| S | Option |
+| D | Command |
+| F | Shift |
+
+Hold Caps **before** a modifier key. These are direct modifiers while Caps is
+held, so **Caps+S+L** moves to the next word, **Caps+F+L** selects one character,
+and **Caps+S+F+L** selects the next word in apps using standard macOS text
+shortcuts. **Caps+D+L** sends Command+Right, which moves to the end of the line
+in standard macOS text fields. **Caps+A+L** sends Control+Right to an app.
+Right Command+A/S/D/F retain their ordinary shortcuts.
+
 | Key with Caps held | Sends | Action |
 | --- | --- | --- |
 | `,` | Forward Delete | Delete the next character |
 | V | Forward Delete | Delete the next character |
+| `;` | Forward Delete | Delete the next character; combines with modifiers |
 | B | Backspace | Delete the previous character |
 | W | Option + Right | Next word |
 | 0 | Command + Left | Beginning of line |
 | 4 or `$` (Shift + 4) | Command + Right | End of line |
 | U | Page Up | Page up |
-| D | Page Down | Page down |
+| O | Page Down | Page down |
 | G | Command + Down | End of document |
 | T | Command + Up | Beginning of document |
 | N | Return | Enter |
+| Space | Return | Enter; combines with modifiers |
 | `[` | Escape | Escape |
-| M | Backspace | Delete the previous character |
+| M | Backspace | Delete the previous character; combines with modifiers |
 | X | Control + D | Your requested forward-delete shortcut |
 
-Caps+M and Caps+Space also send Backspace. H/J/K/L remain the arrow keys.
-Add physical Shift to W, 0, U/D, or G/T for selection where the app supports it.
+H/J/K/L remain the arrow keys. Add Caps+F or physical Shift to arrows for
+selection. Physical Shift also combines with W, 0, U/O, or G/T for selection
+where the app supports it.
 Both 4 and Shift+4 move to the end of the line without selecting, so `$`
 has the same action as 4. These mappings require Caps navigation; Right Command
 keeps its ordinary shortcuts on these keys.
@@ -173,7 +210,7 @@ the Swedish symbol key.
 
 The semicolon key still holds Right Control. Physical Shift or an activated
 home-row F/J hold produces capitals. Caps navigation, held-Space numbers/symbols,
-Caps+Space Backspace, Caps+N Return, and held Tab for Homerow remain
+Caps+Space Return, Caps+N Return, and held Tab for Homerow remain
 available.
 
 Without Option, these keys keep their normal U.S. punctuation,
@@ -308,8 +345,12 @@ physical Control+C also stops that foreground process.
    `a;jf`. They should behave as ordinary text.
 2. Tap Caps Lock: it should act as Escape.
 3. Hold Caps Lock and press H/J/K/L, then release it and type `hjkl`.
-   Hold Space for about 220 ms, then tap A/S/D/F and Q/W/E/R: expect
-   `1234` and `!@#$`. Tap Space normally between words.
+   Hold Caps, then A, then L to test Control+Right in an app that uses it.
+   Caps+Space should send Return; Caps+M and Caps+; should delete backward
+   and forward.
+   Hold Space for about 220 ms, then tap W/E/R, S/D/F, X/C/V, and B:
+   expect `7894561230`. Keep holding Space, hold J for about 200 ms, then tap
+   X/C/V and Q/T: expect `!@#{}`. Tap Space normally between words.
 4. On the Windows keyboard, hold Right Alt and press H/J/K/L. Try physical
    Shift with those arrows to select text. Both Alt+C shortcuts should copy.
    On a Mac keyboard, use Right Command for the same exercise.
@@ -337,8 +378,8 @@ and start the Homebrew service with its saved definition to return to CAGS.
 1. **Now:** practice CAGS and basic navigation. Start using D/K for Command
    and F/J for Shift, then practice A/; for Control and S/L for Option.
    Test any Option-based symbols you use.
-2. **Next:** practice Caps with V/B/N for editing, W for the next word,
-   0/4 for lines, U/D for pages,
+2. **Next:** practice Caps with M/;/Space for editing, W for the next word,
+   0/4 for lines, U/O for pages,
    and G/T for the document. Try held Space for numbers and symbols.
 3. **Later:** tune timing per finger, add further selection and editing actions, and
    consider a persistent navigation mode.
@@ -375,8 +416,11 @@ hand.
 ## Build and verification notes
 
 The scenario counts below describe earlier revisions. The current Caps V/B/N
-bindings and shifted Space symbol row have also been checked on the keyboard
-after reloading.
+bindings and the previous right-hand Space layer were checked on the keyboard.
+The left-hand Miryoku-style numpad and its shifted symbols were confirmed after
+reloading. The ISO `§` key's Space-layer minus mapping was also confirmed.
+After reloading, Caps+Space Return, Caps+M Backspace, Caps+; Forward Delete,
+and Caps+A+L Control+Right were confirmed on the keyboard.
 
 Your installed Karabiner VirtualHID package is **8.5.0** and uses client
 protocol **7**. Stable Kanata **1.12.0** expects the older driver family, so
